@@ -2,7 +2,7 @@ import React from 'react'
 import { assets } from '../assets/assets'
 
 
-// for procedure to book
+// procedure to book
 const Procedure = () => {
   return (
     <div>

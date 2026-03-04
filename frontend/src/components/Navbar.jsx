@@ -18,8 +18,8 @@ const Navbar = ({ setShowLogin }) => {
                 <h2 className='font-bold pl-4 text-xl'>Local Service Provider</h2>
             </div>
 
-            {/* nav options */}
 
+            {/* btn to open navbar */}
             <img onClick={() => setIsOpen(true)} className='h-6 w-6 hidden nav-menu' src={assets.Menu_icon} alt=""  />
 
 
@@ -35,6 +35,7 @@ const Navbar = ({ setShowLogin }) => {
 
                 <button onClick={() => setShowLogin(true)} className='font-semibold bg-blue-700 text-white px-4 py-1.5 mx-3 rounded-xl cursor-pointer w-30'>Sign In</button>
 
+                {/* btn to close navbar */}
                  <img onClick={() => setIsOpen(false)} className='w-6 h-6 hidden nav-cross' src={assets.Cross_icon} />
             </div>
 
