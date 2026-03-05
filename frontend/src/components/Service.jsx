@@ -5,7 +5,7 @@ import { assets } from '../assets/assets'
 // gaining data using props
 const Service = ({ name, service, rating, rate, experience, image }) => {
     return (
-        <div className='bg-white flex w-[80%] mx-auto my-2.5 justify-between items-center rounded'>
+        <div className='bg-white flex w-[80%] max-md:w-[90%] mx-auto my-2.5 justify-between items-center rounded max-md:flex-col py-6'>
             <img className='w-30 h-30 p-2' src={image} alt="" />
 
             <div className='flex-1 ml-4'>

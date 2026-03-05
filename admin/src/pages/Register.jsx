@@ -1,8 +1,7 @@
 import React, { useState } from 'react'
-import { assets } from '../assets/assets'
 import axios from 'axios'
 
-const LoginPopup = ({ setShowLogin }) => {
+const Register = ({ setShowLogin }) => {
 
     // all inputs on the basis that user want to login or sign up
     const [currState, setCurrState] = useState("Sign Up")
@@ -11,8 +10,12 @@ const LoginPopup = ({ setShowLogin }) => {
     const [formData, setFormData] = useState({
         username: "",
         email: "",
-        password: ""
+        password: "",
+        role: "admin"
     });
+
+    // error message state
+    const [errorMessage, setErrorMessage] = useState("");
 
     // handle input values in form
     const handleChange = (e) => {
@@ -25,6 +28,7 @@ const LoginPopup = ({ setShowLogin }) => {
     // handle actions perform on form submition
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setErrorMessage("");
 
         try {
 
@@ -49,7 +53,7 @@ const LoginPopup = ({ setShowLogin }) => {
                     window.location.reload();
                 }
                 setCurrState("Login");
-                setFormData({ username: "", email: "", password: "" })
+                setFormData({ username: "", email: "", password: "", role: "admin" })
                 setShowLogin(false);
             } else {
                 // Show error message from server
@@ -58,6 +62,7 @@ const LoginPopup = ({ setShowLogin }) => {
 
         } catch (error) {
             console.log(error);
+            setErrorMessage(error.response?.data?.message || error.message || "Registration failed. Please try again.");
         }
     }
 
@@ -65,10 +70,11 @@ const LoginPopup = ({ setShowLogin }) => {
     return (
         <div className='z-1 absolute bg-blue-50 border-2 border-gray-500 rounded p-4 h-120 w-100 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'>
 
-            <img onClick={() => setShowLogin(false)} className='w-6 h-6 absolute left-0 top-0 cursor-pointer' src={assets.Cross_icon} alt="" />
 
             {/* Registration or login form  */}
             <form onSubmit={handleSubmit}>
+                {errorMessage && <p className='text-red-600 text-center my-2'>{errorMessage}</p>}
+
                 <h2 className='text-center text-2xl font-semibold'>{currState}</h2>
 
                 <div className='flex flex-col'>
@@ -103,4 +109,4 @@ const LoginPopup = ({ setShowLogin }) => {
     )
 }
 
-export default LoginPopup
+export default Register

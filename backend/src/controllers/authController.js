@@ -43,6 +43,7 @@ async function registerUser(req, res) {
     // message registered user successfully
     res.json({
         success: true, message: "User registered successfully",
+        token: token,
         user: {
             id: user._id,
             username: user.username,
@@ -92,6 +93,7 @@ async function loginUser(req, res) {
     // response for login
     res.json({
         success: true, message: "User logged in successfully",
+        token: token,
         user: {
             id: user._id,
             username: user.username,
