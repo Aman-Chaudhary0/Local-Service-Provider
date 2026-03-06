@@ -1,9 +1,14 @@
 import React from 'react'
 import { assets } from '../assets/assets'
+import {useNavigate} from 'react-router-dom'
 
 
 // gaining data using props
 const Service = ({ name, service, rating, rate, experience, image }) => {
+
+// move to book page onClick book now
+const navigate = useNavigate()
+
     return (
         <div className='bg-white flex w-[80%] max-md:w-[90%] mx-auto my-2.5 justify-between items-center rounded max-md:flex-col py-6'>
             <img className='w-30 h-30 p-2' src={image} alt="" />
@@ -28,7 +33,7 @@ const Service = ({ name, service, rating, rate, experience, image }) => {
                         <p>{rate}</p>
                     </div>
 
-                    <button className='px-4 py-2 mx-3 bg-blue-900 text-white rounded'>Book Now</button>
+                    <button onClick={() => navigate("/book")} className='px-4 py-2 mx-3 bg-blue-900 text-white rounded'>Book Now</button>
                 </div>
             </div>
         </div>

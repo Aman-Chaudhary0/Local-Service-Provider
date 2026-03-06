@@ -41,6 +41,11 @@ const Register = ({ setShowLogin }) => {
                 withCredentials: true   // for cookies
             })
 
+            // login not allowed when user is normal user
+            if (res.data.user.role === "user" && endpoint === "http://localhost:3000/api/auth/login") {
+                return
+            }
+
 
             // Check if response is successful
             if (res.data.success) {

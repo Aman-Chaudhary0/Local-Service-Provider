@@ -14,8 +14,6 @@ const AdminServices = () => {
         <div className='rounded-xl mx-8 my-4 bg-white'>
           <AdminService />
           <AdminService />
-          <AdminService />
-          <AdminService />
         </div>
 
         <button className='bg-blue-600 text-white mx-8 my-4 w-1/4 py-3.5 rounded text-xl'>Add New Service</button>

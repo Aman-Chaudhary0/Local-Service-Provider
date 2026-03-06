@@ -37,7 +37,7 @@ const Navbar = ({ setShowLogin }) => {
 
             <div className='flex items-center'>
                 <img className='w-10 h-10 rounded-full' src={assets.logo} alt="" />
-                <h2 className='font-bold pl-4 text-xl'>Local Service Provider</h2>
+                <h2 className='font-bold pl-4 text-xl max-sm:hidden'>Local Service Provider</h2>
             </div>
 
 
@@ -46,7 +46,7 @@ const Navbar = ({ setShowLogin }) => {
 
 
             {/* if navbar is open it is 0px from right and if navbar is close it is -200px from right */}
-            <div className='flex navbar' style={{ right: isOpen ? '0' : '-200px' }}>
+            <div className='flex navbar max-md: rounded-bl-xl' style={{ right: isOpen ? '0' : '-200px' }}>
 
                 <ul className='flex font-medium items-center'>
                     <li onClick={() => setMenu("home")} className={` ${menu === "home" ? "active" : ""} px-3 text-neutral-700 cursor-pointer`}>Home</li>

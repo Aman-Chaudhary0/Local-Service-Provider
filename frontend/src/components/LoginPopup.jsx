@@ -2,10 +2,11 @@ import React, { useState } from 'react'
 import { assets } from '../assets/assets'
 import axios from 'axios'
 
-const LoginPopup = ({ setShowLogin }) => {
+const LoginPopup = ({ setShowLogin, setIsLogin }) => {
 
     // all inputs on the basis that user want to login or sign up
     const [currState, setCurrState] = useState("Sign Up")
+    const [errorMessage, setErrorMessage] = useState("")
 
     // set inputs in form
     const [formData, setFormData] = useState({
@@ -37,13 +38,22 @@ const LoginPopup = ({ setShowLogin }) => {
                 withCredentials: true   // for cookies
             })
 
+            // login not allowed when user is admin
+            if(res.data.user.role === "admin" && endpoint === "http://localhost:3000/api/auth/login"){
+                return
+            }
 
             // Check if response is successful
-            if (res.data.success) {
+            if (res.data.success ) {
 
                 // Set token in local storage on successful login/registration
                 if (res.data.user && res.data.user.id) {
                     localStorage.setItem("token", res.data.token);
+
+                    // Set isLogin only for login (not registration)
+                    if (currState === "Login") {
+                        setIsLogin(true);
+                    }
 
                     // Refresh page to update UI
                     window.location.reload();

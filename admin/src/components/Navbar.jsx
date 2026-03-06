@@ -33,7 +33,7 @@ const Navbar = ({ setShowLogin }) => {
 
             <div className='flex items-center'>
                 <img className='w-10 h-10 rounded-full' src={assets.logo} alt="" />
-                <h2 className='font-bold pl-4 text-xl'>Local Service Provider</h2>
+                <h2 className='font-bold pl-4 text-xl max-sm:hidden'>Local Service Provider</h2>
             </div>
 
 
