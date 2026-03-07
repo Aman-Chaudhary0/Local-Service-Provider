@@ -13,7 +13,7 @@ export const App = () => {
       <Navbar />
 
       <Routes>
-        <Route path='/admin/register' element={<Register setShowLogin={setShowLogin} />} />
+        <Route path='/' element={<Register setShowLogin={setShowLogin} />} />
         <Route path='/admin/dashboard' element={<AdminDashboard />} />
       </Routes>
       

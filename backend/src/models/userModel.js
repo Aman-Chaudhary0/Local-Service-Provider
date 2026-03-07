@@ -24,7 +24,26 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum: ['user', 'admin'],
         default: 'user',
-    }
+    },
+
+    // add services in admin page
+    servicesOffered: [{
+
+        serviceName: {
+            type: String,
+            required: true
+        },
+
+        experience: {
+            type: String,
+            required: true
+        },
+
+        charge: {
+            type: String,
+            required: true
+        }
+    }]
 
 })
 

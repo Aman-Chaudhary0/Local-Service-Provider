@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { assets } from '../assets/assets'
 import axios from 'axios';
+import {useNavigate} from 'react-router-dom'
+
 
 
 const Navbar = ({ setShowLogin }) => {
@@ -14,16 +16,23 @@ const Navbar = ({ setShowLogin }) => {
     // get token
     const token = localStorage.getItem("token");
 
+    const navigate = useNavigate()
+    
+
     // Logout
     const logout = async () => {
         try {
             await axios.post("http://localhost:3000/api/auth/logout", {}, {
                 withCredentials: true
             });
+            
+            navigate("/");
             // Remove token from localStorage
             localStorage.removeItem("token");
             // Refresh page to update UI
             window.location.reload();
+            
+            
         } catch (error) {
             console.error("Logout error:", error);
             // Even if logout fails, remove token from localStorage

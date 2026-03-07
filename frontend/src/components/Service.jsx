@@ -6,6 +6,7 @@ import {useNavigate} from 'react-router-dom'
 // gaining data using props
 const Service = ({ name, service, rating, rate, experience, image }) => {
 
+const token = localStorage.getItem("token");
 // move to book page onClick book now
 const navigate = useNavigate()
 
@@ -33,7 +34,7 @@ const navigate = useNavigate()
                         <p>{rate}</p>
                     </div>
 
-                    <button onClick={() => navigate("/book")} className='px-4 py-2 mx-3 bg-blue-900 text-white rounded'>Book Now</button>
+                    <button onClick={() => token ?navigate("/book"): navigate("/")} className='px-4 py-2 mx-3 bg-blue-900 text-white rounded'>Book Now</button>
                 </div>
             </div>
         </div>

@@ -24,7 +24,7 @@ const App = () => {
         <Route path='/' element={<Home />} />
 
         {/* Open book page only when user is login */}
-        <Route path="/book" element={isLogin ? <Book /> : <Navigate to="/" replace />} />
+        <Route path="/book" element={<Book />} />
         
         <Route path='/dashboard' element={<UserDashboard />} />
 

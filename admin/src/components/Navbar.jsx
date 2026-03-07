@@ -3,14 +3,20 @@ import { assets } from '../assets/assets'
 
 const token = localStorage.getItem("token");
 
+ 
+
     // Logout
     const logout = async () => {
         try {
             await axios.post("http://localhost:3000/api/auth/logout", {}, {
                 withCredentials: true
             });
+
+            
+
             // Remove token from localStorage
             localStorage.removeItem("token");
+            localStorage.removeItem("_id");
 
             // Refresh page to update UI
             window.location.reload();
@@ -20,6 +26,7 @@ const token = localStorage.getItem("token");
             
             // Even if logout fails, remove token from localStorage
             localStorage.removeItem("token");
+            localStorage.removeItem("_id");
             window.location.reload();
         }
     }

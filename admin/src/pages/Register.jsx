@@ -53,6 +53,7 @@ const Register = ({ setShowLogin }) => {
                 // Set token in local storage on successful login/registration
                 if (res.data.user && res.data.user.id) {
                     localStorage.setItem("token", res.data.token);
+                    localStorage.setItem("_id",res.data.user.id);
 
                     // Refresh page to update UI
                     window.location.reload();

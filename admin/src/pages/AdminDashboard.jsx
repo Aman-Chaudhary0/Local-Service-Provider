@@ -1,6 +1,7 @@
 import React from 'react'
 import AdminServicesList from '../components/AdminServicesList'
 import AdminBookingsList from '../components/AdminBookingsList'
+import AddServicePopup from '../components/AddServicePopup'
 
 const AdminDashboard = () => {
   return (
@@ -9,6 +10,8 @@ const AdminDashboard = () => {
             <h2 className=' font-bold text-4xl m-5 max-sm:text-3xl'>Welcome, John!</h2>
             <p className=' bg-black h-30 w-30 rounded-full m-4 max-sm:h-25 max-sm:w-25 '>.</p>
         </div>
+        
+        <AddServicePopup />
         <AdminServicesList />
         <AdminBookingsList />
     </div>
