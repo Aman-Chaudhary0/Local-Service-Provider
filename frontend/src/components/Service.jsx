@@ -4,7 +4,7 @@ import {useNavigate} from 'react-router-dom'
 
 
 // gaining data using props
-const Service = ({ name, service, rating, rate, experience, image }) => {
+const Service = ({ name, service, rate, experience }) => {
 
 const token = localStorage.getItem("token");
 // move to book page onClick book now
@@ -12,7 +12,7 @@ const navigate = useNavigate()
 
     return (
         <div className='bg-white flex w-[80%] max-md:w-[90%] mx-auto my-2.5 justify-between items-center rounded max-md:flex-col py-6'>
-            <img className='w-30 h-30 p-2' src={image} alt="" />
+            <img className='w-30 h-30 p-2' src={assets.profileLogo} alt="" />
 
             <div className='flex-1 ml-4'>
 
@@ -22,7 +22,7 @@ const navigate = useNavigate()
                         <p className='text-gray-500'>{service}</p>
                     </div>
 
-                    <p className='px-3'>{rating}⭐⭐⭐⭐⭐</p>
+                    
                 </div>
 
                 <hr className='text-gray-400' />

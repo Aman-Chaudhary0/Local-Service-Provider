@@ -1,20 +1,21 @@
 import React, { useState } from 'react'
 import Register from './pages/Register'
 import Navbar from './components/Navbar'
-import { Route, Routes } from 'react-router'
+import { Route, Routes } from 'react-router-dom'
 import AdminDashboard from './pages/AdminDashboard'
 
 export const App = () => {
 
    const [showLogin, setShowLogin] = useState(false);
+   const token = localStorage.getItem("token");
    
   return (
     <div className=''>
-      <Navbar />
+      <Navbar setShowLogin={setShowLogin} />
 
       <Routes>
         <Route path='/' element={<Register setShowLogin={setShowLogin} />} />
-        <Route path='/admin/dashboard' element={<AdminDashboard />} />
+        {token ? <Route path='/admin/dashboard' element={<AdminDashboard />} /> : <></>}
       </Routes>
       
     </div>

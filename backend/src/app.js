@@ -20,7 +20,8 @@ app.use(cookieParser());
 
 
 app.use('/api/auth', authRoutes);
-app.use('/api/add', serviceRoutes)
+app.use('/api/add', serviceRoutes);
+app.use('/api/get', serviceRoutes)
 
 
 module.exports = app;

@@ -5,6 +5,8 @@ import Book_Schedule from './Book_Schedule.png'
 import Work_done from './Work_done.png'
 import Cross_icon from './Cross_icon.png'
 import Menu_icon from './menu_icon.png'
+import profileLogo from './profile_logo.png'
+
 
 
 
@@ -16,7 +18,8 @@ export const assets = {
     Book_Schedule,
     Work_done,
     Cross_icon,
-    Menu_icon
+    Menu_icon,
+    profileLogo
 }
 
 export const serviceProviders = [

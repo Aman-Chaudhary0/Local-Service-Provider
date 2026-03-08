@@ -1,29 +1,40 @@
 import React, { useState } from 'react'
 import { assets } from '../assets/assets'
+import { useNavigate } from "react-router-dom";
+import axios from 'axios'
 
-const token = localStorage.getItem("token");
 
- 
+
+
+
+const Navbar = ({ setShowLogin }) => {
+
+    const token = localStorage.getItem("token");
+    const navigate = useNavigate();
 
     // Logout
     const logout = async () => {
         try {
+
             await axios.post("http://localhost:3000/api/auth/logout", {}, {
                 withCredentials: true
             });
 
-            
+
 
             // Remove token from localStorage
             localStorage.removeItem("token");
             localStorage.removeItem("_id");
+            navigate("/");
 
             // Refresh page to update UI
             window.location.reload();
 
+
+
         } catch (error) {
             console.error("Logout error:", error);
-            
+
             // Even if logout fails, remove token from localStorage
             localStorage.removeItem("token");
             localStorage.removeItem("_id");
@@ -33,7 +44,6 @@ const token = localStorage.getItem("token");
 
 
 
-const Navbar = ({ setShowLogin }) => {
 
     return (
         <div className='flex justify-between bg-blue-100 h-15 items-center px-4'>
@@ -50,6 +60,7 @@ const Navbar = ({ setShowLogin }) => {
                 {/* change signup btn on basis of login/logout  */}
                 {!token && <button onClick={() => setShowLogin(true)} className='font-semibold bg-blue-700 text-white px-4 py-1.5 mx-3 rounded-xl cursor-pointer w-30'>Sign In</button>
                 }
+                
                 {token && <button onClick={logout} className='font-semibold bg-blue-700 text-white px-4 py-1.5 mx-3 rounded-xl cursor-pointer w-30'>Logout</button>
                 }
 
