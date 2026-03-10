@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { assets } from '../assets/assets'
 import axios from 'axios';
-import {useNavigate} from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 
 
@@ -17,7 +17,7 @@ const Navbar = ({ setShowLogin }) => {
     const token = localStorage.getItem("token");
 
     const navigate = useNavigate()
-    
+
 
     // Logout
     const logout = async () => {
@@ -25,14 +25,15 @@ const Navbar = ({ setShowLogin }) => {
             await axios.post("http://localhost:3000/api/auth/logout", {}, {
                 withCredentials: true
             });
-            
+
             navigate("/");
             // Remove token from localStorage
             localStorage.removeItem("token");
+            localStorage.removeItem("id");
             // Refresh page to update UI
             window.location.reload();
-            
-            
+
+
         } catch (error) {
             console.error("Logout error:", error);
             // Even if logout fails, remove token from localStorage
@@ -68,10 +69,13 @@ const Navbar = ({ setShowLogin }) => {
                 {/* change signup btn on basis of login/logout  */}
                 {!token && <button onClick={() => setShowLogin(true)} className='font-semibold bg-blue-700 text-white px-4 py-1.5 mx-3 rounded-xl cursor-pointer w-30'>Sign In</button>
                 }
-                
-                {token && <button onClick={logout} className='font-semibold bg-blue-700 text-white px-4 py-1.5 mx-3 rounded-xl cursor-pointer w-30'>Logout</button>
+
+                {token && <button onClick={logout} className='max-md: font-semibold bg-blue-700 text-white px-4 py-1.5 rounded-xl cursor-pointer w-30'>Logout</button>
                 }
-               
+
+                {/* user profile logo */}
+                <img onClick={() => navigate("/dashboard")} src={assets.profileLogo} className='h-10 w-10 rounded-full mx-2 max-md:m-2 ' alt="" />
+
 
                 {/* btn to close navbar */}
                 <img onClick={() => setIsOpen(false)} className='w-6 h-6 hidden nav-cross' src={assets.Cross_icon} />

@@ -46,7 +46,7 @@ async function authUser(req, res, next) {
 
     // if any token not received
     if (!token) {
-        res.status(401).json({ message: "Unauthorized" })
+        return res.status(401).json({ message: "Unauthorized" })
     }
 
     try {

@@ -26,23 +26,16 @@ const userSchema = new mongoose.Schema({
         default: 'user',
     },
 
-    // add services in admin page
+    // services offered by providers
     servicesOffered: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "addService",
+    }],
 
-        serviceName: {
-            type: String,
-            required: true
-        },
-
-        experience: {
-            type: String,
-            required: true
-        },
-
-        charge: {
-            type: String,
-            required: true
-        }
+    // service book by user 
+    bookedService: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "bookedService",
     }]
 
 })

@@ -1,12 +1,14 @@
 import React from 'react'
+import { assets } from '../assets/assets'
 
-const UserBooking = () => {
+// it is the user booking info section
+const UserBooking = ({ adminName, time, date, bookService }) => {
     return (
         <div className='bg-white rounded-xl mx-8 my-3 px-6 py-2'>
-            <p className='my-2 text-xl font-semibold'>Electrical Repairs</p>
+            <p className='my-2 text-xl font-semibold'>{bookService}</p>
 
             <div className='flex justify-between'>
-                <p className='my-2 text-gray-700'>Date: 15 Dec,2035 at 2 pm</p>
+                <p className='my-2 text-gray-700'>Date: {date} at {time}</p>
                 <p className='my-2 text-gray-700 text-sm bg-green-200 rounded px-2'>Confirmed</p>
 
             </div>
@@ -14,8 +16,8 @@ const UserBooking = () => {
             <hr className='text-gray-300 ' />
 
             <div className=' flex justify-between'>
-                <p className=' bg-black h-12 w-12 my-2 rounded-full'>.</p>
-                <h2 className=' font-bold my-auto'>John Doe</h2>
+                <img src={assets.profileLogo} className=' h-12 w-12 my-2 rounded-full' />
+                <h2 className=' font-bold my-auto'>{adminName}</h2>
             </div>
         </div>
     )

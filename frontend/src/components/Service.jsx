@@ -1,14 +1,15 @@
 import React from 'react'
 import { assets } from '../assets/assets'
-import {useNavigate} from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
+
 
 
 // gaining data using props
-const Service = ({ name, service, rate, experience }) => {
+const Service = ({ adminId, name, service, rate, experience }) => {
 
-const token = localStorage.getItem("token");
-// move to book page onClick book now
-const navigate = useNavigate()
+    const token = localStorage.getItem("token");
+    // move to book page onClick book now
+    const navigate = useNavigate()
 
     return (
         <div className='bg-white flex w-[80%] max-md:w-[90%] mx-auto my-2.5 justify-between items-center rounded max-md:flex-col py-6'>
@@ -22,7 +23,7 @@ const navigate = useNavigate()
                         <p className='text-gray-500'>{service}</p>
                     </div>
 
-                    
+
                 </div>
 
                 <hr className='text-gray-400' />
@@ -34,7 +35,20 @@ const navigate = useNavigate()
                         <p>{rate}</p>
                     </div>
 
-                    <button onClick={() => token ?navigate("/book"): navigate("/")} className='px-4 py-2 mx-3 bg-blue-900 text-white rounded'>Book Now</button>
+                    {/* if user is login move to book page else move to home page */}
+                    <button
+                        onClick={() => {
+                            if (token) {
+                                sessionStorage.setItem("selectedProviderId", adminId || "")
+                                navigate("/book", { state: { adminId, service } })
+                            } else {
+                                navigate("/")
+                            }
+                        }}
+                        className='px-4 py-2 mx-3 bg-blue-900 text-white rounded'
+                    >
+                        Book Now
+                    </button>
                 </div>
             </div>
         </div>

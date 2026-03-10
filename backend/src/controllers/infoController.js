@@ -1,16 +1,16 @@
 const userModel = require('../models/userModel')
 
-// get all providers info
+// send all providers info
 async function allProvidersInfo(req, res) {
     try {
-        const info = await userModel.find({ role: "admin" });
+        const info = await userModel.find({ role: "admin" }).populate("servicesOffered");
 
         return res.json({
             success: true,
             info,
             message: "Get providers data successfully"
         });
-        
+
     } catch (error) {
         return res.status(500).json({
             success: false,
@@ -19,4 +19,4 @@ async function allProvidersInfo(req, res) {
     }
 }
 
-module.exports = { allProvidersInfo};
+module.exports = { allProvidersInfo };

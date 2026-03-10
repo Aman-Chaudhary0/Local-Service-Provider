@@ -1,22 +1,31 @@
-const userModel = require('../models/userModel');
+const addServiceModel = require('../models/addServiceModel')
+const userModel = require('../models/userModel')
 
-// to add service on admin dashboard
-async function addservice(req,res) {
+// In this providers add their service
+async function addService(req, res) {
+
     try {
         const { id, serviceName, experience, charge } = req.body;
 
-        // find user 
-        const admin = await userModel.findById(id);
+        // find admin
+        const user = await userModel.findById(id);
 
-        // push service 
-        admin.servicesOffered.push({ serviceName, experience, charge });
-        await admin.save();
+        const service = await addServiceModel.create({
+            serviceName, experience, charge
+        });
 
-        return res.status(201).json({ success: true, message: "service added successfully" });
-        
+        // add service in admin data
+        user.servicesOffered.push(service._id);
+        await user.save();
+
+        res.json({
+            success: true,
+            message: "Service added successfully",
+            user
+        });
     } catch (error) {
-        return res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ error: error.message });
     }
-}
+};
 
-module.exports= {addservice}
+module.exports = { addService }

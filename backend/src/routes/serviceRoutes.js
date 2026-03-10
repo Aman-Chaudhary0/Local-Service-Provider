@@ -2,16 +2,23 @@ const express = require("express");
 const serviceOfferedController = require("../controllers/serviceOfferedController")
 const authMiddleware = require("../middlewares/authMiddleware")
 const infoController = require('../controllers/infoController')
+const bookingController = require('../controllers/bookingController')
 
 
 
 const router = express.Router();
 
 // Routes for addService
-router.post("/service", authMiddleware.authAdmin,  serviceOfferedController.addservice );
+router.post("/service", authMiddleware.authAdmin, serviceOfferedController.addService);
 
 // get info of all providers
-router.get("/providers", infoController.allProvidersInfo )
+router.get("/providers", authMiddleware.authUser, infoController.allProvidersInfo)
+
+// route for user book service
+router.post("/bookservice", authMiddleware.authUser, bookingController.bookingService)
+
+// route to get all bookings of aparticular user
+router.get("/mybookings", authMiddleware.authUser, bookingController.getBookings)
 
 
 module.exports = router;
