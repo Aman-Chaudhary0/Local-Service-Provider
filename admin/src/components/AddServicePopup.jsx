@@ -4,6 +4,9 @@ import { useState } from 'react'
 
 const AddServicePopup = () => {
 
+    // show add service form state
+    const [isServiceAdd, setIsServiceAdd] = useState(false);
+
     // get id and state for errors
     const id = localStorage.getItem("_id");
     const [errorMessage, setErrorMessage] = useState("");
@@ -36,6 +39,8 @@ const AddServicePopup = () => {
                 withCredentials: true
             });
 
+            setIsServiceAdd(true);
+
             // sending success message and empty form after submittion
             if (res.data?.success) {
                 setSuccessMessage("Service added successfully.");
@@ -59,7 +64,7 @@ const AddServicePopup = () => {
     return (
         <div className='z-1 absolute bg-blue-50 border-2 border-gray-500 rounded p-4 h-90 w-80 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'>
 
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} >
                 {errorMessage && <p className='text-red-600 text-center my-2'>{errorMessage}</p>}
                 {successMessage && <p className='text-green-700 text-center my-2'>{successMessage}</p>}
                 <h2 className='text-center text-2xl font-semibold'>Add New Service</h2>

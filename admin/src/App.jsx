@@ -6,15 +6,14 @@ import AdminDashboard from './pages/AdminDashboard'
 
 export const App = () => {
 
-   const [showLogin, setShowLogin] = useState(false);
    const token = localStorage.getItem("token");
    
   return (
     <div className=''>
-      <Navbar setShowLogin={setShowLogin} />
+      <Navbar  />
 
       <Routes>
-        <Route path='/' element={<Register setShowLogin={setShowLogin} />} />
+        <Route path='/' element={<Register />} />
         {token ? <Route path='/admin/dashboard' element={<AdminDashboard />} /> : <></>}
       </Routes>
       

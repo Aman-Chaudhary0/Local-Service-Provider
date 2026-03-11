@@ -3,6 +3,12 @@ const mongoose = require('mongoose')
 
 // user book service schema
 const bookedServiceSchema = new mongoose.Schema({
+    userId : {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "user",
+        required: true,
+    },
+
     adminId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "user",

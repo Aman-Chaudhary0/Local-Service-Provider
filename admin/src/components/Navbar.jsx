@@ -7,7 +7,7 @@ import axios from 'axios'
 
 
 
-const Navbar = ({ setShowLogin }) => {
+const Navbar = () => {
 
     const token = localStorage.getItem("token");
     const navigate = useNavigate();
@@ -58,9 +58,9 @@ const Navbar = ({ setShowLogin }) => {
 
 
                 {/* change signup btn on basis of login/logout  */}
-                {!token && <button onClick={() => setShowLogin(true)} className='font-semibold bg-blue-700 text-white px-4 py-1.5 mx-3 rounded-xl cursor-pointer w-30'>Sign In</button>
+                {!token && <button onClick={() => navigate("/")} className='font-semibold bg-blue-700 text-white px-4 py-1.5 mx-3 rounded-xl cursor-pointer w-30'>Sign In</button>
                 }
-                
+
                 {token && <button onClick={logout} className='font-semibold bg-blue-700 text-white px-4 py-1.5 mx-3 rounded-xl cursor-pointer w-30'>Logout</button>
                 }
 

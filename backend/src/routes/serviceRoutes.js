@@ -17,8 +17,12 @@ router.get("/providers", authMiddleware.authUser, infoController.allProvidersInf
 // route for user book service
 router.post("/bookservice", authMiddleware.authUser, bookingController.bookingService)
 
-// route to get all bookings of aparticular user
+// route to get all bookings of a particular user
 router.get("/mybookings", authMiddleware.authUser, bookingController.getBookings)
+
+// route to get all bookings of a particular admin in admin dashboard
+router.get("/adminbookings", authMiddleware.authAdmin, bookingController.adminBookings)
+
 
 
 module.exports = router;

@@ -1,7 +1,10 @@
 import React, { useState } from 'react'
 import axios from 'axios'
+import { useNavigate } from "react-router-dom";
 
-const Register = ({ setShowLogin }) => {
+const Register = () => {
+
+    const navigate = useNavigate();
 
     // all inputs on the basis that user want to login or sign up
     const [currState, setCurrState] = useState("Sign Up")
@@ -55,12 +58,13 @@ const Register = ({ setShowLogin }) => {
                     localStorage.setItem("token", res.data.token);
                     localStorage.setItem("_id",res.data.user.id);
 
+                    navigate("/admin/dashboard");
+
                     // Refresh page to update UI
                     window.location.reload();
                 }
                 setCurrState("Login");
                 setFormData({ username: "", email: "", password: "", role: "admin" })
-                setShowLogin(false);
             } else {
                 // Show error message from server
                 setErrorMessage(res.data.message || "An error occurred");

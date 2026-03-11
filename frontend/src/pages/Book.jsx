@@ -12,7 +12,6 @@ const Book = () => {
 
   // create formdata to store data from form
   const [formData, setFormData] = useState({
-    id,
     adminId: adminId || fallbackAdminId || "",
     bookService: service,
     date: "",
