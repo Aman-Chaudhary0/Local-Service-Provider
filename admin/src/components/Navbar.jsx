@@ -9,7 +9,7 @@ import axios from 'axios'
 
 const Navbar = () => {
 
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("admin_token");
     const navigate = useNavigate();
 
     // Logout
@@ -23,7 +23,7 @@ const Navbar = () => {
 
 
             // Remove token from localStorage
-            localStorage.removeItem("token");
+            localStorage.removeItem("admin_token");
             localStorage.removeItem("_id");
             navigate("/");
 
@@ -36,7 +36,7 @@ const Navbar = () => {
             console.error("Logout error:", error);
 
             // Even if logout fails, remove token from localStorage
-            localStorage.removeItem("token");
+            localStorage.removeItem("admin_token");
             localStorage.removeItem("_id");
             window.location.reload();
         }

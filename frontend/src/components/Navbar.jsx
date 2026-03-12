@@ -14,7 +14,7 @@ const Navbar = ({ setShowLogin }) => {
     const [menu, setMenu] = useState("home");
 
     // get token
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("user_token");
 
     const navigate = useNavigate()
 
@@ -28,7 +28,7 @@ const Navbar = ({ setShowLogin }) => {
 
             navigate("/");
             // Remove token from localStorage
-            localStorage.removeItem("token");
+            localStorage.removeItem("user_token");
             localStorage.removeItem("id");
             // Refresh page to update UI
             window.location.reload();
@@ -37,7 +37,7 @@ const Navbar = ({ setShowLogin }) => {
         } catch (error) {
             console.error("Logout error:", error);
             // Even if logout fails, remove token from localStorage
-            localStorage.removeItem("token");
+            localStorage.removeItem("user_token");
             window.location.reload();
         }
     }

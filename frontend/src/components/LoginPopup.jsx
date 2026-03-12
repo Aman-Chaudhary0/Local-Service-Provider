@@ -48,7 +48,7 @@ const LoginPopup = ({ setShowLogin }) => {
 
                 // Set token in local storage on successful login/registration
                 if (res.data.user && res.data.user.id) {
-                    localStorage.setItem("token", res.data.token);
+                    localStorage.setItem("user_token", res.data.token);
                     localStorage.setItem("id", res.data.user.id);
 
 

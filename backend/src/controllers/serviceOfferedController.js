@@ -5,13 +5,17 @@ const userModel = require('../models/userModel')
 async function addService(req, res) {
 
     try {
-        const { id, serviceName, experience, charge } = req.body;
+        const { serviceName, experience, charge } = req.body;
 
+        const adminId = req.user?.id;
+        if (!adminId) {
+            return res.status(401).json({ message: "Unauthorized" });
+        }
         // find admin
-        const user = await userModel.findById(id);
+        const user = await userModel.findById(adminId);
 
         const service = await addServiceModel.create({
-            serviceName, experience, charge
+            adminId,serviceName, experience, charge
         });
 
         // add service in admin data
@@ -28,4 +32,24 @@ async function addService(req, res) {
     }
 };
 
-module.exports = { addService }
+// function to display services add by admin
+async function adminServices(req, res) {
+    
+    try {
+        const adminId = req.user?.id;
+        if (!adminId) {
+            return res.status(401).json({ message: "Unauthorized" });
+        }
+        const services = await addServiceModel.find({ adminId});
+
+        res.json({
+            success: true,
+            message: "Services fetched successfully",
+            services
+        });
+    } catch (error) {
+         res.status(500).json({ error: error.message });
+    }
+} 
+
+module.exports = { addService, adminServices }

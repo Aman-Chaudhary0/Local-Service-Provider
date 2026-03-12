@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 async function authAdmin(req, res, next) {
 
     // receive token
-    const token = req.cookies.token;
+    const token = req.cookies.admin_token;
 
     // if token is not received send message unauthorised
     if (!token) {
@@ -42,7 +42,7 @@ async function authAdmin(req, res, next) {
 async function authUser(req, res, next) {
 
     // receiving token 
-    const token = req.cookies.token;
+    const token = req.cookies.user_token;
 
     // if any token not received
     if (!token) {

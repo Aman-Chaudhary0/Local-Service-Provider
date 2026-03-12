@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom'
 // gaining data using props
 const Service = ({ adminId, name, service, rate, experience }) => {
 
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("user_token");
     // move to book page onClick book now
     const navigate = useNavigate()
 

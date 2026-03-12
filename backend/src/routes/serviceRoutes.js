@@ -23,6 +23,9 @@ router.get("/mybookings", authMiddleware.authUser, bookingController.getBookings
 // route to get all bookings of a particular admin in admin dashboard
 router.get("/adminbookings", authMiddleware.authAdmin, bookingController.adminBookings)
 
+// route for services offered by a particular admin
+router.get("/adminservices", authMiddleware.authAdmin, serviceOfferedController.adminServices)
+
 
 
 module.exports = router;

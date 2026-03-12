@@ -38,7 +38,9 @@ async function registerUser(req, res) {
         role: user.role,
     }, process.env.JWT_SECRET)
 
-    res.cookie("token", token)
+    // cookie on the basis user admin or user
+    const cookieName = user.role === "admin" ? "admin_token" : "user_token";
+    res.cookie(cookieName, token)
 
     // message registered user successfully
     res.json({
@@ -87,7 +89,8 @@ async function loginUser(req, res) {
         role: user.role,
     }, process.env.JWT_SECRET)
 
-    res.cookie("token", token)
+    const cookieName = user.role === "admin" ? "admin_token" : "user_token";
+    res.cookie(cookieName, token)
 
 
     // response for login
@@ -107,7 +110,8 @@ async function loginUser(req, res) {
 // Logout Api
 async function logoutUser(req, res) {
 
-    res.clearCookie("token")
+    res.clearCookie("user_token")
+    res.clearCookie("admin_token")
 
     res.json({ success: true, message: "User logged out successfully" })
 }

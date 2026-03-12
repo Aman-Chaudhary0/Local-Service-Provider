@@ -6,7 +6,7 @@ import AdminDashboard from './pages/AdminDashboard'
 
 export const App = () => {
 
-   const token = localStorage.getItem("token");
+   const token = localStorage.getItem("admin_token");
    
   return (
     <div className=''>
