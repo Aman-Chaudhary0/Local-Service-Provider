@@ -1,11 +1,22 @@
 const jwt = require("jsonwebtoken");
 
+function getToken(req, cookieName) {
+    const cookieToken = req.cookies?.[cookieName];
+    if (cookieToken) return cookieToken;
+
+    const authHeader = req.headers?.authorization || "";
+    if (authHeader.startsWith("Bearer ")) {
+        return authHeader.slice(7);
+    }
+
+    return null;
+}
 
 // access only to Admin
 async function authAdmin(req, res, next) {
 
     // receive token
-    const token = req.cookies.admin_token;
+    const token = getToken(req, "admin_token");
 
     // if token is not received send message unauthorised
     if (!token) {
@@ -42,7 +53,7 @@ async function authAdmin(req, res, next) {
 async function authUser(req, res, next) {
 
     // receiving token 
-    const token = req.cookies.user_token;
+    const token = getToken(req, "user_token");
 
     // if any token not received
     if (!token) {

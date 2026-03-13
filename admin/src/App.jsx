@@ -3,6 +3,15 @@ import Register from './pages/Register'
 import Navbar from './components/Navbar'
 import { Route, Routes } from 'react-router-dom'
 import AdminDashboard from './pages/AdminDashboard'
+import axios from 'axios'
+
+// seperate token name for user and admin
+const cachedToken = localStorage.getItem("admin_token");
+if (cachedToken) {
+  axios.defaults.headers.common.Authorization = `Bearer ${cachedToken}`
+} else {
+  delete axios.defaults.headers.common.Authorization
+}
 
 export const App = () => {
 

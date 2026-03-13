@@ -6,8 +6,18 @@ import LoginPopup from './components/LoginPopup'
 import UserDashboard from './pages/UserDashboard'
 import { Navigate } from "react-router-dom";
 import Book from './pages/Book'
+import axios from 'axios'
+import Error from './components/error'
+import Services from './pages/services'
 
 
+
+const cachedToken = localStorage.getItem("user_token");
+if (cachedToken) {
+  axios.defaults.headers.common.Authorization = `Bearer ${cachedToken}`
+} else {
+  delete axios.defaults.headers.common.Authorization
+}
 
 const App = () => {
 
@@ -27,7 +37,10 @@ const App = () => {
         {/* Open book page only when user is login */}
         <Route path='/book' element={token ? <Book /> : <Navigate to="/" replace />} />
 
+        <Route path='/services' element={<Services />} />
+
         <Route path='/dashboard' element={token ? <UserDashboard /> : <Navigate to="/" replace />} />
+        <Route path='*' element={<Error />} />
 
       </Routes>
     </div>

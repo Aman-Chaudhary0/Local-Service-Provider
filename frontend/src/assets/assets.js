@@ -6,6 +6,7 @@ import Work_done from './Work_done.png'
 import Cross_icon from './Cross_icon.png'
 import Menu_icon from './menu_icon.png'
 import profileLogo from './profile_logo.png'
+import hero_background from './hero-background.png'
 
 
 
@@ -19,7 +20,8 @@ export const assets = {
     Work_done,
     Cross_icon,
     Menu_icon,
-    profileLogo
+    profileLogo,
+    hero_background
 }
 
 export const serviceProviders = [

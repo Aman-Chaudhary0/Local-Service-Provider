@@ -26,6 +26,9 @@ router.get("/adminbookings", authMiddleware.authAdmin, bookingController.adminBo
 // route for services offered by a particular admin
 router.get("/adminservices", authMiddleware.authAdmin, serviceOfferedController.adminServices)
 
+// route for update request status
+router.post("/requeststatus",authMiddleware.authAdmin,bookingController.requestStatus)
+
 
 
 module.exports = router;

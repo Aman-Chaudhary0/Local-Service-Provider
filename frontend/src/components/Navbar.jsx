@@ -46,7 +46,7 @@ const Navbar = ({ setShowLogin }) => {
         <div className='flex justify-between bg-blue-100 h-15 items-center px-4'>
 
             <div className='flex items-center'>
-                <img className='w-10 h-10 rounded-full' src={assets.logo} alt="" />
+                <img onClick={() => navigate("/")} className='w-10 h-10 rounded-full' src={assets.logo} alt="" />
                 <h2 className='font-bold pl-4 text-xl max-sm:hidden'>Local Service Provider</h2>
             </div>
 
@@ -59,8 +59,8 @@ const Navbar = ({ setShowLogin }) => {
             <div className='flex navbar max-md: rounded-bl-xl' style={{ right: isOpen ? '0' : '-200px' }}>
 
                 <ul className='flex font-medium items-center'>
-                    <li onClick={() => setMenu("home")} className={` ${menu === "home" ? "active" : ""} px-3 text-neutral-700 cursor-pointer`}>Home</li>
-                    <li onClick={() => setMenu("services")} className={` ${menu === "services" ? "active" : ""} px-3 text-neutral-700 cursor-pointer`}>Services</li>
+                    <li onClick={() => (setMenu("home"), navigate("/"))} className={` ${menu === "home" ? "active" : ""} px-3 text-neutral-700 cursor-pointer`}>Home</li>
+                    <li onClick={() => (setMenu("services"), navigate("/services"))} className={` ${menu === "services" ? "active" : ""} px-3 text-neutral-700 cursor-pointer`}>Services</li>
                     <li onClick={() => setMenu("about")} className={` ${menu === "about" ? "active" : ""} px-3 text-neutral-700 cursor-pointer`}>About</li>
                     <li onClick={() => setMenu("contact")} className={` ${menu === "contact" ? "active" : ""} px-3 text-neutral-700 cursor-pointer`}>Contact</li>
                 </ul>

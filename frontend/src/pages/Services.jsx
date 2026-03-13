@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import Service from './Service'
+import Service from '../components/Service'
 import axios from 'axios'
+import Search from '../components/Search'
 
 const Services = () => {
 
@@ -34,11 +35,14 @@ const Services = () => {
   }, [])
 
   return (
-    <div className='bg-neutral-200 py-4 h-105 overflow-y-scroll '>
+    <>
+    <Search />
+    <div className='bg-neutral-200 py-4 h-auto '>
       {services.map((item, index) => (
         <Service key={index} adminId={item.id} name={item.name} service={item.service} rate={item.rate} experience={item.experience} />
       ))}
     </div>
+    </>
   )
 }
 

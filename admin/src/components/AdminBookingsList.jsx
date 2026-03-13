@@ -6,23 +6,31 @@ import axios from 'axios'
 const AdminBookingsList = () => {
 
   const [bookings, setBookings] = useState([]);
+  const [error, setError] = useState("");
 
   useEffect(() => {
 
     // fetching api
     const fetchBookings = async () => {
-      const res = await axios.get("http://localhost:3000/api/get/adminbookings", {
-        withCredentials: true
-      })
+      try {
+        const res = await axios.get("http://localhost:3000/api/get/adminbookings", {
+          withCredentials: true
+        })
 
-      const bookingsList = res.data.data.map((service) => ({
-        userName: service.userId?.username || "Unknown",
-        time: service.time,
-        date: service.date,
-        address: service.address,
-      }))
+        const bookingsList = res.data.data.map((service) => ({
+          bookingId: service._id,
+          userName: service.userId?.username || "Unknown",
+          time: service.time,
+          date: service.date,
+          address: service.address,
+          status: service.status,
+        }))
 
-      setBookings(bookingsList);
+        setBookings(bookingsList);
+        setError("");
+      } catch (err) {
+        setError(err.response?.data?.message || "Failed to load bookings");
+      }
     }
 
     fetchBookings();
@@ -36,8 +44,9 @@ const AdminBookingsList = () => {
       <hr className='mx-8 text-gray-400' />
 
       <div>
+        {error && <p className='mx-8 my-3 text-red-600'>{error}</p>}
         {bookings.map((item, index) => (
-          <AdminBooking key={index} userName={item.userName} time={item.time} date={item.date} address={item.address} />
+          <AdminBooking key={index} bookingId={item.bookingId} userName={item.userName} time={item.time} date={item.date} address={item.address} status={item.status} />
         ))}
       </div>
 

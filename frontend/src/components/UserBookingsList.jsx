@@ -24,6 +24,7 @@ const UserBookingsList = () => {
       date: service.date,
       address: service.address,
       bookService: service.bookService,
+      status: service.status,
     }))
 
     setBookings(bookingsList);
@@ -48,7 +49,7 @@ const UserBookingsList = () => {
 
       <div>
         {bookings.map((item, index) => (
-          <UserBooking key={index} adminName={item.adminName} time={item.time} date={item.date} address={item.address} bookService={item.bookService} />
+          <UserBooking key={index} adminName={item.adminName} time={item.time} date={item.date} address={item.address} bookService={item.bookService} status={item.status} />
         ))}
 
 

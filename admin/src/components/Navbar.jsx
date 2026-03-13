@@ -16,7 +16,8 @@ const Navbar = () => {
     const logout = async () => {
         try {
 
-            await axios.post("http://localhost:3000/api/auth/logout", {}, {
+            // different route for admin registration
+            await axios.post("http://localhost:3000/api/auth/logout-admin", {}, {
                 withCredentials: true
             });
 

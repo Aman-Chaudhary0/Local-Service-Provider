@@ -107,13 +107,16 @@ async function loginUser(req, res) {
 }
 
 
-// Logout Api
+// Logout Api (user)
 async function logoutUser(req, res) {
-
     res.clearCookie("user_token")
-    res.clearCookie("admin_token")
-
     res.json({ success: true, message: "User logged out successfully" })
 }
 
-module.exports = { registerUser, loginUser, logoutUser }
+// Logout Api (admin)
+async function logoutAdmin(req, res) {
+    res.clearCookie("admin_token")
+    res.json({ success: true, message: "Admin logged out successfully" })
+}
+
+module.exports = { registerUser, loginUser, logoutUser, logoutAdmin }

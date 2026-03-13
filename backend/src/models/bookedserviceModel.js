@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 
 // user book service schema
 const bookedServiceSchema = new mongoose.Schema({
-    userId : {
+    userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "user",
         required: true,
@@ -33,7 +33,12 @@ const bookedServiceSchema = new mongoose.Schema({
     address: {
         type: String,
         required: true,
-    }
+    },
+    status: {
+        type: String,
+        enum: ["Pending", "Accepted", "Rejected"],
+        default: "Pending"
+    },
 })
 
 const bookedServiceModel = mongoose.model("bookedService", bookedServiceSchema)

@@ -16,7 +16,7 @@ const Book = () => {
     bookService: service,
     date: "",
     time: "",
-    address: ""
+    address: "",
   });
 
   useEffect(() => {

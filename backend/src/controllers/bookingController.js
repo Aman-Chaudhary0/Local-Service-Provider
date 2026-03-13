@@ -5,7 +5,7 @@ const userModel = require('../models/userModel')
 async function bookingService(req, res) {
 
     try {
-        const {adminId, bookService, date, time, address } = req.body;
+        const { adminId, bookService, date, time, address, status } = req.body;
         const userId = req.user?.id;
 
         // if not a user
@@ -35,7 +35,7 @@ async function bookingService(req, res) {
 
         // create service 
         const service = await bookedServiceModel.create({
-           userId,adminId, bookService, date, time, address
+            userId, adminId, bookService, date, time, address, status
         });
 
         // add service to user data
@@ -93,7 +93,7 @@ async function getBookings(req, res) {
 
 // all bookings of a particular provider
 async function adminBookings(req, res) {
-    
+
     try {
         const adminId = req.user?.id;
 
@@ -105,18 +105,47 @@ async function adminBookings(req, res) {
         }
 
         // sending only required data
-        const data = await bookedServiceModel.find({ adminId: adminId}).populate('userId','username')
+        const data = await bookedServiceModel.find({ adminId: adminId }).populate('userId', 'username')
 
-        res.json({success: true, message: "Data fetched successfully", data})
+        res.json({ success: true, message: "Data fetched successfully", data })
 
 
 
 
     } catch (error) {
-        
+
         res.status(500).json({ success: false, message: error.message });
     }
 
 }
 
-module.exports = { bookingService, getBookings, adminBookings }
+// function to update request status
+async function requestStatus(req, res) {
+
+    try {
+        const { _id, status } = req.body;
+        const adminId = req.user?.id;
+
+        if (!adminId) {
+            return res.status(401).json({ success: false, message: "Unauthorized" });
+        }
+
+        // it filter on basis of id of booking and id of admin
+        const update = await bookedServiceModel.findOneAndUpdate(
+            { _id, adminId },
+            { status: status },
+            { new: true }
+        )
+
+        if (!update) {
+            return res.status(403).json({ success: false, message: "Forbidden" });
+        }
+
+        res.json(update)
+
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+}
+
+module.exports = { bookingService, getBookings, adminBookings,requestStatus }

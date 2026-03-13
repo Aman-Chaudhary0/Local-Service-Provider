@@ -1,13 +1,11 @@
 import React from 'react'
-import Search from '../components/Search'
-import Services from '../components/ServicesList'
 import Procedure from '../components/Procedure'
+import HeroBackground from '../components/HeroBackground'
 
 const Home = () => {
   return (
     <div>
-      <Search />
-      <Services />
+      <HeroBackground />
       <Procedure />
     </div>
   )
