@@ -13,6 +13,9 @@ async function addService(req, res) {
         }
         // find admin
         const user = await userModel.findById(adminId);
+        if (!user) {
+            return res.status(404).json({ message: "Admin not found" });
+        }
 
         const service = await addServiceModel.create({
             adminId,serviceName, experience, charge

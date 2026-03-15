@@ -5,7 +5,7 @@ const userModel = require('../models/userModel')
 async function bookingService(req, res) {
 
     try {
-        const { adminId, bookService, date, time, address, status } = req.body;
+        const { adminId, bookService, date, time, address } = req.body;
         const userId = req.user?.id;
 
         // if not a user
@@ -17,7 +17,7 @@ async function bookingService(req, res) {
         }
 
         // if any field is empty
-        if (!adminId || !date || !time || !address) {
+        if (!adminId || !bookService || !date || !time || !address) {
             return res.status(400).json({
                 success: false,
                 message: "Missing required fields",
@@ -33,9 +33,17 @@ async function bookingService(req, res) {
             });
         }
 
+        const admin = await userModel.findById(adminId);
+        if (!admin) {
+            return res.status(404).json({
+                success: false,
+                message: "Admin not found",
+            });
+        }
+
         // create service 
         const service = await bookedServiceModel.create({
-            userId, adminId, bookService, date, time, address, status
+            userId, adminId, bookService, date, time, address
         });
 
         // add service to user data

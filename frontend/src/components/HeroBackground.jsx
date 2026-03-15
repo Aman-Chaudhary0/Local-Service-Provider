@@ -1,10 +1,13 @@
 import React from 'react'
-import { assets} from '../assets/assets'
+import { assets } from '../assets/assets'
 
 const HeroBackground = () => {
   return (
-    <div>
-        <img className='w-full h-150 ' src={assets.hero_background} alt="" />
+    <div className='w-full h-120 bg-cover'
+      style={{ backgroundImage: `url(${assets.hero_background})` }}>
+
+        <h3 className='px-10 py-20 text-5xl font-bold text-blue-950'>Book trusted professionals near you for home, repair, and daily services.</h3>
+
     </div>
   )
 }
