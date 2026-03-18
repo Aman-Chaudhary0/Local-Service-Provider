@@ -5,14 +5,11 @@ import { useState } from 'react'
 const AddServicePopup = ({ isServiceAdd,setIsServiceAdd}) => {
 
 
-    // get id and state for errors
-    const id = localStorage.getItem("_id");
     const [errorMessage, setErrorMessage] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
 
     // formData to get data from form
     const [formData, setFormData] = useState({
-        id: id || "",
         serviceName: "",
         experience: "",
         charge: "",

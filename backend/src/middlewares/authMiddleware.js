@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const AppError = require("../utils/AppError");
 
 function getToken(req, cookieName) {
     const cookieToken = req.cookies?.[cookieName];
@@ -20,7 +21,7 @@ async function authAdmin(req, res, next) {
 
     // if token is not received send message unauthorised
     if (!token) {
-        return res.status(401).json({ message: "Unauthorized" })
+        return next(new AppError("Unauthorized", 401))
     }
 
     try {
@@ -30,7 +31,7 @@ async function authAdmin(req, res, next) {
 
         // if token is not of admin then user don't have access to add service
         if (decoded.role !== "admin") {
-            return res.status(403).json({ message: "You don't have access" })
+            return next(new AppError("You don't have access", 403))
         }
 
         // create new property in request named user can be accessed in serviceOffered.controller
@@ -42,8 +43,7 @@ async function authAdmin(req, res, next) {
     }
     // if find any error
     catch (err) {
-        console.log(err);
-        return res.status(401).json({ message: "Unauthorized" })
+        return next(new AppError("Unauthorized", 401))
     }
 
 }
@@ -57,7 +57,7 @@ async function authUser(req, res, next) {
 
     // if any token not received
     if (!token) {
-        return res.status(401).json({ message: "Unauthorized" })
+        return next(new AppError("Unauthorized", 401))
     }
 
     try {
@@ -66,7 +66,7 @@ async function authUser(req, res, next) {
 
         // verify token is of user
         if (decoded.role !== "user") {
-            return res.status(403).json({ message: "You don't have access" })
+            return next(new AppError("You don't have access", 403))
         }
 
         // create new property in request named user can be accessed
@@ -77,8 +77,7 @@ async function authUser(req, res, next) {
 
         // catch error
     } catch (err) {
-        console.log(err);
-        return res.status(401).json({ message: "Unauthorized" })
+        return next(new AppError("Unauthorized", 401))
     }
 
 }

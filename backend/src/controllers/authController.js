@@ -1,10 +1,12 @@
 const userModel = require('../models/userModel');
 const jwt = require("jsonwebtoken")
 const bcrypt = require("bcrypt")
+const AppError = require("../utils/AppError")
+const asyncHandler = require("../utils/asyncHandler")
 
 
 // Register Api
-async function registerUser(req, res) {
+const registerUser = asyncHandler(async (req, res) => {
 
     const { username, email, password, role = "user" } = req.body;
 
@@ -18,7 +20,7 @@ async function registerUser(req, res) {
     })
 
     if (isUserAlreadyExists) {
-        return res.json({ success: false, message: "User already exists" })
+        throw new AppError("User already exists", 409)
     }
 
     // hash the password
@@ -53,11 +55,11 @@ async function registerUser(req, res) {
             role: user.role,
         }
     })
-}
+})
 
 
 // Login Api
-async function loginUser(req, res) {
+const loginUser = asyncHandler(async (req, res) => {
 
     const { username, email, password } = req.body;
 
@@ -72,7 +74,7 @@ async function loginUser(req, res) {
 
 
     if (!user) {
-        return res.json({ success: false, message: "Invalid credentials" })
+        throw new AppError("Invalid credentials", 401)
     }
 
 
@@ -80,7 +82,7 @@ async function loginUser(req, res) {
     const isPasswordValid = await bcrypt.compare(password, user.password)
 
     if (!isPasswordValid) {
-        return res.json({ success: false, message: "Invalid credentials" })
+        throw new AppError("Invalid credentials", 401)
     }
 
     // create a new token during login
@@ -104,19 +106,19 @@ async function loginUser(req, res) {
             role: user.role
         }
     })
-}
+})
 
 
 // Logout Api (user)
-async function logoutUser(req, res) {
+const logoutUser = asyncHandler(async (req, res) => {
     res.clearCookie("user_token")
     res.json({ success: true, message: "User logged out successfully" })
-}
+})
 
 // Logout Api (admin)
-async function logoutAdmin(req, res) {
+const logoutAdmin = asyncHandler(async (req, res) => {
     res.clearCookie("admin_token")
     res.json({ success: true, message: "Admin logged out successfully" })
-}
+})
 
 module.exports = { registerUser, loginUser, logoutUser, logoutAdmin }

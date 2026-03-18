@@ -3,6 +3,7 @@ const cors = require('cors')
 const cookieParser = require('cookie-parser')
 const authRoutes = require('./routes/authRoutes')
 const serviceRoutes = require('./routes/serviceRoutes')
+const errorHandler = require('./middlewares/errorHandler')
 
 const app = express();
 
@@ -22,6 +23,8 @@ app.use(cookieParser());
 app.use('/api/auth', authRoutes);
 app.use('/api/add', serviceRoutes);
 app.use('/api/get', serviceRoutes);
+
+app.use(errorHandler);
 
 
 module.exports = app;

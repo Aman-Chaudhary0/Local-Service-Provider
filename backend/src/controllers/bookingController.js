@@ -1,159 +1,116 @@
-const bookedServiceModel = require('../models/bookedserviceModel')
-const userModel = require('../models/userModel')
+const bookedServiceModel = require('../models/bookedserviceModel');
+const userModel = require('../models/userModel');
+const AppError = require('../utils/AppError');
+const asyncHandler = require('../utils/asyncHandler');
 
 // controller to book a service
-async function bookingService(req, res) {
+const bookingService = asyncHandler(async (req, res) => {
+    const { adminId, bookService, date, time, address } = req.body;
+    const userId = req.user?.id;
 
-    try {
-        const { adminId, bookService, date, time, address } = req.body;
-        const userId = req.user?.id;
-
-        // if not a user
-        if (!userId) {
-            return res.status(401).json({
-                success: false,
-                message: "Unauthorized",
-            });
-        }
-
-        // if any field is empty
-        if (!adminId || !bookService || !date || !time || !address) {
-            return res.status(400).json({
-                success: false,
-                message: "Missing required fields",
-            });
-        }
-
-        // get user
-        const user = await userModel.findById(userId);
-        if (!user) {
-            return res.status(404).json({
-                success: false,
-                message: "User not found",
-            });
-        }
-
-        const admin = await userModel.findById(adminId);
-        if (!admin) {
-            return res.status(404).json({
-                success: false,
-                message: "Admin not found",
-            });
-        }
-
-        // create service 
-        const service = await bookedServiceModel.create({
-            userId, adminId, bookService, date, time, address
-        });
-
-        // add service to user data
-        user.bookedService.push(service._id);
-        await user.save();
-
-        res.json({
-            success: true,
-            message: "Service added successfully",
-            user
-        });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+    if (!userId) {
+        throw new AppError("Unauthorized", 401);
     }
-};
 
+    const user = await userModel.findById(userId);
+    if (!user) {
+        throw new AppError("User not found", 404);
+    }
 
+    const admin = await userModel.findById(adminId);
+    if (!admin) {
+        throw new AppError("Admin not found", 404);
+    }
+
+    const service = await bookedServiceModel.create({
+        userId,
+        adminId,
+        bookService,
+        date,
+        time,
+        address,
+    });
+
+    user.bookedService.push(service._id);
+    await user.save();
+
+    res.json({
+        success: true,
+        message: "Service added successfully",
+        data: service,
+    });
+});
 
 // all booking of a particular user
-async function getBookings(req, res) {
+const getBookings = asyncHandler(async (req, res) => {
+    const userId = req.user?.id;
 
-    try {
-        const userId = req.user?.id;
-
-        if (!userId) {
-            return res.status(401).json({
-                success: false,
-                message: "Unauthorized",
-            });
-        }
-
-        // sending only required data
-        const user = await userModel.findById(userId).populate({
-            path: "bookedService",
-            populate: {
-                path: "adminId",
-                select: "username"
-            }
-        })
-
-        if (!user) {
-            return res.status(404).json({
-                success: false,
-                message: "User not found",
-            });
-        }
-
-        res.json({ success: true, message: "Bookings fetched successfully", user });
-    } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+    if (!userId) {
+        throw new AppError("Unauthorized", 401);
     }
-}
 
+    const user = await userModel.findById(userId).populate({
+        path: "bookedService",
+        populate: {
+            path: "adminId",
+            select: "username",
+        },
+    });
 
+    if (!user) {
+        throw new AppError("User not found", 404);
+    }
+
+    res.json({
+        success: true,
+        message: "Bookings fetched successfully",
+        data: user,
+    });
+});
 
 // all bookings of a particular provider
-async function adminBookings(req, res) {
+const adminBookings = asyncHandler(async (req, res) => {
+    const adminId = req.user?.id;
 
-    try {
-        const adminId = req.user?.id;
-
-        if (!adminId) {
-            return res.status(401).json({
-                success: false,
-                message: "Unauthorized",
-            });
-        }
-
-        // sending only required data
-        const data = await bookedServiceModel.find({ adminId: adminId }).populate('userId', 'username')
-
-        res.json({ success: true, message: "Data fetched successfully", data })
-
-
-
-
-    } catch (error) {
-
-        res.status(500).json({ success: false, message: error.message });
+    if (!adminId) {
+        throw new AppError("Unauthorized", 401);
     }
 
-}
+    const data = await bookedServiceModel
+        .find({ adminId })
+        .populate('userId', 'username');
+
+    res.json({
+        success: true,
+        message: "Data fetched successfully",
+        data,
+    });
+});
 
 // function to update request status
-async function requestStatus(req, res) {
+const requestStatus = asyncHandler(async (req, res) => {
+    const { _id, status } = req.body;
+    const adminId = req.user?.id;
 
-    try {
-        const { _id, status } = req.body;
-        const adminId = req.user?.id;
-
-        if (!adminId) {
-            return res.status(401).json({ success: false, message: "Unauthorized" });
-        }
-
-        // it filter on basis of id of booking and id of admin
-        const update = await bookedServiceModel.findOneAndUpdate(
-            { _id, adminId },
-            { status: status },
-            { new: true }
-        )
-
-        if (!update) {
-            return res.status(403).json({ success: false, message: "Forbidden" });
-        }
-
-        res.json(update)
-
-    } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+    if (!adminId) {
+        throw new AppError("Unauthorized", 401);
     }
-}
 
-module.exports = { bookingService, getBookings, adminBookings,requestStatus }
+    const update = await bookedServiceModel.findOneAndUpdate(
+        { _id, adminId },
+        { status },
+        { new: true }
+    );
+
+    if (!update) {
+        throw new AppError("Forbidden", 403);
+    }
+
+    res.json({
+        success: true,
+        message: "Request status updated successfully",
+        data: update,
+    });
+});
+
+module.exports = { bookingService, getBookings, adminBookings, requestStatus };

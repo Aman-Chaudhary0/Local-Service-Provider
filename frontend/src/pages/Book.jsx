@@ -8,8 +8,6 @@ const Book = () => {
   const { adminId, service } = location.state || {};
   const fallbackAdminId = sessionStorage.getItem("selectedProviderId");
 
-  const id = localStorage.getItem("id");
-
   // create formdata to store data from form
   const [formData, setFormData] = useState({
     adminId: adminId || fallbackAdminId || "",
@@ -22,10 +20,9 @@ const Book = () => {
   useEffect(() => {
     setFormData((prev) => ({
       ...prev,
-      id: id || "",
       adminId: adminId || fallbackAdminId || "",
     }))
-  }, [id, adminId, fallbackAdminId])
+  }, [adminId, fallbackAdminId])
 
   // value change during input
   const handleChange = (e) => {
@@ -48,6 +45,8 @@ const Book = () => {
         time: "",
         address: ""
       })
+
+      window.location.reload();
 
     } catch (error) {
       console.log(error);

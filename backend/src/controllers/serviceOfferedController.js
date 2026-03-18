@@ -1,58 +1,55 @@
 const addServiceModel = require('../models/addServiceModel')
-const userModel = require('../models/userModel')
+const userModel = require('../models/userModel');
+const AppError = require('../utils/AppError');
+const asyncHandler = require('../utils/asyncHandler');
 
 // In this providers add their service
-async function addService(req, res) {
+const addService = asyncHandler(async (req, res) => {
 
-    try {
-        const { serviceName, experience, charge } = req.body;
+    const { serviceName, experience, charge } = req.body;
 
-        const adminId = req.user?.id;
-        if (!adminId) {
-            return res.status(401).json({ message: "Unauthorized" });
-        }
-        // find admin
-        const user = await userModel.findById(adminId);
-        if (!user) {
-            return res.status(404).json({ message: "Admin not found" });
-        }
-
-        const service = await addServiceModel.create({
-            adminId,serviceName, experience, charge
-        });
-
-        // add service in admin data
-        user.servicesOffered.push(service._id);
-        await user.save();
-
-        res.json({
-            success: true,
-            message: "Service added successfully",
-            user
-        });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+    const adminId = req.user?.id;
+    if (!adminId) {
+        throw new AppError("Unauthorized", 401);
     }
-};
+    // find admin
+    const user = await userModel.findById(adminId);
+    if (!user) {
+        throw new AppError("Admin not found", 404)
+    }
+
+    const service = await addServiceModel.create({
+        adminId, serviceName, experience, charge
+    });
+
+    // add service in admin data
+    user.servicesOffered.push(service._id);
+    await user.save();
+
+    res.json({
+        success: true,
+        message: "Service added successfully",
+        user
+    });
+
+});
 
 // function to display services add by admin
-async function adminServices(req, res) {
-    
-    try {
-        const adminId = req.user?.id;
-        if (!adminId) {
-            return res.status(401).json({ message: "Unauthorized" });
-        }
-        const services = await addServiceModel.find({ adminId});
+const adminServices = asyncHandler(async (req, res) => {
 
-        res.json({
-            success: true,
-            message: "Services fetched successfully",
-            services
-        });
-    } catch (error) {
-         res.status(500).json({ error: error.message });
+
+    const adminId = req.user?.id;
+    if (!adminId) {
+        throw new AppError("Unauthorized", 401);
     }
-} 
+    const services = await addServiceModel.find({ adminId });
+
+    res.json({
+        success: true,
+        message: "Services fetched successfully",
+        services
+    });
+
+});
 
 module.exports = { addService, adminServices }
