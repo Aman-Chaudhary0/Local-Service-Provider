@@ -4,23 +4,25 @@ import { useNavigate } from "react-router-dom";
 import axios from 'axios'
 
 
-
-
-
 const Navbar = () => {
 
     const token = localStorage.getItem("admin_token");
     const navigate = useNavigate();
 
+    // logout state's
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
+    const [logoutError, setLogoutError] = useState("");
+
     // Logout
     const logout = async () => {
         try {
+            setIsLoggingOut(true);
+            setLogoutError("");
 
             // different route for admin registration
             await axios.post("http://localhost:3000/api/auth/logout-admin", {}, {
                 withCredentials: true
             });
-
 
 
             // Remove token from localStorage
@@ -31,15 +33,16 @@ const Navbar = () => {
             // Refresh page to update UI
             window.location.reload();
 
-
-
         } catch (error) {
             console.error("Logout error:", error);
+            setLogoutError(error.response?.data?.message || "Logout failed");
 
             // Even if logout fails, remove token from localStorage
             localStorage.removeItem("admin_token");
             localStorage.removeItem("_id");
             window.location.reload();
+        } finally {
+            setIsLoggingOut(false);
         }
     }
 
@@ -48,6 +51,7 @@ const Navbar = () => {
 
     return (
         <div className='flex justify-between bg-blue-100 h-15 items-center px-4'>
+            {logoutError && <p className='absolute left-1/2 top-16 z-10 -translate-x-1/2 rounded bg-red-100 px-4 py-2 text-sm text-red-700'>{logoutError}</p>}
 
             <div className='flex items-center'>
                 <img className='w-10 h-10 rounded-full' src={assets.logo} alt="" />
@@ -62,7 +66,7 @@ const Navbar = () => {
                 {!token && <button onClick={() => navigate("/")} className='font-semibold bg-blue-700 text-white px-4 py-1.5 mx-3 rounded-xl cursor-pointer w-30'>Sign In</button>
                 }
 
-                {token && <button onClick={logout} className='font-semibold bg-blue-700 text-white px-4 py-1.5 mx-3 rounded-xl cursor-pointer w-30'>Logout</button>
+                {token && <button disabled={isLoggingOut} onClick={logout} className='font-semibold bg-blue-700 text-white px-4 py-1.5 mx-3 rounded-xl cursor-pointer w-30 disabled:bg-blue-400'>{isLoggingOut ? "Logging out..." : "Logout"}</button>
                 }
 
 

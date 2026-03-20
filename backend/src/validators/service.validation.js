@@ -5,6 +5,26 @@ const objectId = z
   .trim()
   .regex(/^[0-9a-fA-F]{24}$/, "Invalid MongoDB ObjectId");
 
+const listQueryFields = {
+  search: z
+    .string()
+    .trim()
+    .max(100, "Search must not exceed 100 characters")
+    .optional(),
+
+    // coerse to convert string to number
+  page: z.coerce
+    .number()
+    .int()
+    .min(1, "Page must be at least 1")
+    .optional(),
+  limit: z.coerce
+    .number()
+    .int()
+    .min(1, "Limit must be at least 1")
+    .max(100, "Limit must not exceed 100")
+    .optional(),
+};
 
   // validate add service schema by admin
 const addServiceSchema = z.object({
@@ -27,13 +47,11 @@ const addServiceSchema = z.object({
   }).strict(),
 });
 
+
+// make it strict
 const providersQuerySchema = z.object({
   query: z.object({
-    search: z
-      .string()
-      .trim()
-      .max(100, "Search must not exceed 100 characters")
-      .optional(),
+    ...listQueryFields,
   }).strict(),
 });
 

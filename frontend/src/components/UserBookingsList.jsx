@@ -7,27 +7,39 @@ const UserBookingsList = () => {
 
   const [bookings, setBookings] = useState([]);
   const [userName, setUserName] = useState('');
-  
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
 
   // fetch all bookings of a paricular user
   const fetchBookings = async () => {
+    setIsLoading(true);
+    setErrorMessage("");
 
-    const res = await axios.get("http://localhost:3000/api/get/mybookings", {
-      withCredentials: true
-    })
+    try {
+      const res = await axios.get("http://localhost:3000/api/get/mybookings", {
+        withCredentials: true
+      })
 
-    setUserName(res.data.user.username);
+      setUserName(res.data.data.username);
 
-    const bookingsList = res.data.user.bookedService.map((service) => ({
-      adminName: service.adminId.username,
-      time: service.time,
-      date: service.date,
-      address: service.address,
-      bookService: service.bookService,
-      status: service.status,
-    }))
+      const bookingsList = res.data.data.bookedService.map((service) => ({
+        adminName: service.adminId?.username || "Unknown Provider",
+        time: service.time,
+        date: service.date,
+        address: service.address,
+        bookService: service.bookService,
+        status: service.status,
+      }))
 
-    setBookings(bookingsList);
+      setBookings(bookingsList);
+      
+    } catch (error) {
+      setErrorMessage(error.response?.data?.message || "Unable to load bookings");
+      setBookings([]);
+
+    } finally {
+      setIsLoading(false);
+    }
 
   }
 
@@ -48,6 +60,10 @@ const UserBookingsList = () => {
       <hr className='mx-8 text-gray-400' />
 
       <div>
+        {isLoading && <p className='mx-8 my-4 rounded bg-blue-100 px-4 py-3 text-blue-700'>Loading bookings...</p>}
+        {!isLoading && errorMessage && <p className='mx-8 my-4 rounded bg-red-100 px-4 py-3 text-red-700'>{errorMessage}</p>}
+        {!isLoading && !errorMessage && bookings.length === 0 && <p className='mx-8 my-4 rounded bg-yellow-100 px-4 py-3 text-yellow-800'>No bookings found.</p>}
+
         {bookings.map((item, index) => (
           <UserBooking key={index} adminName={item.adminName} time={item.time} date={item.date} address={item.address} bookService={item.bookService} status={item.status} />
         ))}

@@ -7,16 +7,19 @@ const AdminBookingsList = () => {
 
   const [bookings, setBookings] = useState([]);
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
 
     // fetching api
     const fetchBookings = async () => {
+      setIsLoading(true);
       try {
         const res = await axios.get("http://localhost:3000/api/get/adminbookings", {
           withCredentials: true
         })
 
+        // get boking information from server
         const bookingsList = res.data.data.map((service) => ({
           bookingId: service._id,
           userName: service.userId?.username || "Unknown",
@@ -30,6 +33,10 @@ const AdminBookingsList = () => {
         setError("");
       } catch (err) {
         setError(err.response?.data?.message || "Failed to load bookings");
+        setBookings([]);
+
+      } finally {
+        setIsLoading(false);
       }
     }
 
@@ -44,7 +51,11 @@ const AdminBookingsList = () => {
       <hr className='mx-8 text-gray-400' />
 
       <div>
+
+        {/* loading ,errr and success status */}
+        {isLoading && <p className='mx-8 my-3 rounded bg-blue-100 px-4 py-3 text-blue-700'>Loading booking requests...</p>}
         {error && <p className='mx-8 my-3 text-red-600'>{error}</p>}
+        {!isLoading && !error && bookings.length === 0 && <p className='mx-8 my-3 rounded bg-yellow-100 px-4 py-3 text-yellow-800'>No booking requests found.</p>}
         {bookings.map((item, index) => (
           <AdminBooking key={index} bookingId={item.bookingId} userName={item.userName} time={item.time} date={item.date} address={item.address} status={item.status} />
         ))}
