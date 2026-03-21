@@ -4,6 +4,9 @@ import { assets } from '../assets/assets'
 
 // procedure to book
 const Procedure = () => {
+
+
+    //============================================================================================================================================================//
   return (
     <div>
         <h2 className='text-center font-semibold text-3xl mt-1 mb-8'>Procedure</h2>

@@ -5,6 +5,8 @@ import { useState } from 'react'
 // admin bookings
 const AdminBooking = ({ bookingId, userName, time, date, address, status }) => {
 
+
+  // state variables
   const [requestStatus, setRequestStatus] = useState(status)
   const [click, setClick] = useState(status !== "Pending")
   const [isLoading, setIsLoading] = useState(false)
@@ -18,6 +20,7 @@ const AdminBooking = ({ bookingId, userName, time, date, address, status }) => {
       setErrorMessage("")
       setSuccessMessage("")
 
+      //api fetching
       await axios.post("http://localhost:3000/api/get/requeststatus", {
         _id: bookingId,
         status: nextStatus,
@@ -38,6 +41,7 @@ const AdminBooking = ({ bookingId, userName, time, date, address, status }) => {
     }
   }
 
+  // action after api calling
   useEffect(() => {
     setRequestStatus(status)
     setClick(status !== "Pending")
@@ -56,6 +60,8 @@ const AdminBooking = ({ bookingId, userName, time, date, address, status }) => {
     color = "bg-yellow-500"
   }
 
+
+  //============================================================================================================================================================//
   return (
     <div className='bg-white rounded-xl mx-8 my-3 px-6 py-2'>
 

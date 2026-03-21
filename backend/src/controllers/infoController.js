@@ -1,5 +1,6 @@
 const addServiceModel = require('../models/addServiceModel');
 const asyncHandler = require('../utils/asyncHandler');
+const sendSuccess = require('../utils/sendSuccess');
 
 function escapeRegex(value) {
     return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -37,15 +38,10 @@ const allProvidersInfo = asyncHandler(async (req, res) => {
         experience: item.experience,
     }));
 
-    return res.json({
-        success: true,
+    return sendSuccess(res, {
         message: "Get services data successfully",
-
-        //send data of 10 services
         data: formattedServices,
-
-        // sending pagination information
-        pagination: {
+        meta: {
             total,
             page,
             limit,

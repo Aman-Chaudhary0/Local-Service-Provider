@@ -2,6 +2,7 @@ const bookedServiceModel = require('../models/bookedserviceModel');
 const userModel = require('../models/userModel');
 const AppError = require('../utils/AppError');
 const asyncHandler = require('../utils/asyncHandler');
+const sendSuccess = require('../utils/sendSuccess');
 
 // controller to book a service
 const bookingService = asyncHandler(async (req, res) => {
@@ -34,8 +35,7 @@ const bookingService = asyncHandler(async (req, res) => {
     user.bookedService.push(service._id);
     await user.save();
 
-    res.json({
-        success: true,
+    return sendSuccess(res, {
         message: "Service added successfully",
         data: service,
     });
@@ -61,8 +61,7 @@ const getBookings = asyncHandler(async (req, res) => {
         throw new AppError("User not found", 404);
     }
 
-    res.json({
-        success: true,
+    return sendSuccess(res, {
         message: "Bookings fetched successfully",
         data: user,
     });
@@ -80,8 +79,7 @@ const adminBookings = asyncHandler(async (req, res) => {
         .find({ adminId })
         .populate('userId', 'username');
 
-    res.json({
-        success: true,
+    return sendSuccess(res, {
         message: "Data fetched successfully",
         data,
     });
@@ -106,8 +104,7 @@ const requestStatus = asyncHandler(async (req, res) => {
         throw new AppError("Forbidden", 403);
     }
 
-    res.json({
-        success: true,
+    return sendSuccess(res, {
         message: "Request status updated successfully",
         data: update,
     });

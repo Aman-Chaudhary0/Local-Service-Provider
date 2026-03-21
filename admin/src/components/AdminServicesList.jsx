@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import AdminService from './AdminService'
 import axios from 'axios'
+import { getApiData, getApiErrorMessage } from '../utils/api'
 
 
 // services offered by provider
@@ -18,10 +19,10 @@ const AdminServices = ({ setIsServiceAdd }) => {
 
       try {
         const res = await axios.get("http://localhost:3000/api/get/adminservices", { withCredentials: true })
-        setServiceList(res.data.services)
+        setServiceList(getApiData(res) || [])
 
       } catch (error) {
-        setErrorMessage(error.response?.data?.message || "Unable to load services")
+        setErrorMessage(getApiErrorMessage(error, "Unable to load services"))
         setServiceList([])
         
       } finally {
@@ -30,6 +31,8 @@ const AdminServices = ({ setIsServiceAdd }) => {
     })()
   }, [])
 
+
+  //============================================================================================================================================================//
   return (
     <div className=' my-10 bg-indigo-50'>
 

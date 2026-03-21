@@ -2,6 +2,8 @@ import React from 'react'
 import { assets } from '../assets/assets'
 
 const HeroBackground = () => {
+
+  //============================================================================================================================================================//
   return (
     <div className='w-full h-120 bg-cover'
       style={{ backgroundImage: `url(${assets.hero_background})` }}>

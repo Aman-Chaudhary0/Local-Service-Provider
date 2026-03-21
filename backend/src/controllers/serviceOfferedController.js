@@ -2,6 +2,7 @@ const addServiceModel = require('../models/addServiceModel')
 const userModel = require('../models/userModel');
 const AppError = require('../utils/AppError');
 const asyncHandler = require('../utils/asyncHandler');
+const sendSuccess = require('../utils/sendSuccess');
 
 // In this providers add their service
 const addService = asyncHandler(async (req, res) => {
@@ -26,10 +27,9 @@ const addService = asyncHandler(async (req, res) => {
     user.servicesOffered.push(service._id);
     await user.save();
 
-    res.json({
-        success: true,
+    return sendSuccess(res, {
         message: "Service added successfully",
-        user
+        data: user
     });
 
 });
@@ -44,10 +44,9 @@ const adminServices = asyncHandler(async (req, res) => {
     }
     const services = await addServiceModel.find({ adminId });
 
-    res.json({
-        success: true,
+    return sendSuccess(res, {
         message: "Services fetched successfully",
-        services
+        data: services
     });
 
 });

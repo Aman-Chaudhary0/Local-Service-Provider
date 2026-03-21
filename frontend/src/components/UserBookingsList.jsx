@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react'
 import UserBooking from './UserBooking'
 import axios from 'axios'
 import { assets } from '../assets/assets'
+import { getApiData, getApiErrorMessage } from '../utils/api'
 
 const UserBookingsList = () => {
 
+  // state variables
   const [bookings, setBookings] = useState([]);
   const [userName, setUserName] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -19,10 +21,12 @@ const UserBookingsList = () => {
       const res = await axios.get("http://localhost:3000/api/get/mybookings", {
         withCredentials: true
       })
+      const responseData = getApiData(res)
 
-      setUserName(res.data.data.username);
+      setUserName(responseData?.username || "");
 
-      const bookingsList = res.data.data.bookedService.map((service) => ({
+      // mapping the booking list
+      const bookingsList = (responseData?.bookedService || []).map((service) => ({
         adminName: service.adminId?.username || "Unknown Provider",
         time: service.time,
         date: service.date,
@@ -34,7 +38,7 @@ const UserBookingsList = () => {
       setBookings(bookingsList);
       
     } catch (error) {
-      setErrorMessage(error.response?.data?.message || "Unable to load bookings");
+      setErrorMessage(getApiErrorMessage(error, "Unable to load bookings"));
       setBookings([]);
 
     } finally {
@@ -48,6 +52,8 @@ const UserBookingsList = () => {
   }, []);
 
 
+
+//============================================================================================================================================================//
   return (
     <div>
       <div className='bg-cyan-50 flex justify-between'>

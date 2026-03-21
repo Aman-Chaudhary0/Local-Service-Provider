@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken")
 const bcrypt = require("bcrypt")
 const AppError = require("../utils/AppError")
 const asyncHandler = require("../utils/asyncHandler")
+const sendSuccess = require('../utils/sendSuccess')
 
 
 // Register Api
@@ -45,14 +46,16 @@ const registerUser = asyncHandler(async (req, res) => {
     res.cookie(cookieName, token)
 
     // message registered user successfully
-    res.json({
-        success: true, message: "User registered successfully",
-        token: token,
-        user: {
-            id: user._id,
-            username: user.username,
-            email: user.email,
-            role: user.role,
+    return sendSuccess(res, {
+        message: "User registered successfully",
+        data: {
+            token,
+            user: {
+                id: user._id,
+                username: user.username,
+                email: user.email,
+                role: user.role,
+            }
         }
     })
 })
@@ -96,14 +99,16 @@ const loginUser = asyncHandler(async (req, res) => {
 
 
     // response for login
-    res.json({
-        success: true, message: "User logged in successfully",
-        token: token,
-        user: {
-            id: user._id,
-            username: user.username,
-            email: user.email,
-            role: user.role
+    return sendSuccess(res, {
+        message: "User logged in successfully",
+        data: {
+            token,
+            user: {
+                id: user._id,
+                username: user.username,
+                email: user.email,
+                role: user.role
+            }
         }
     })
 })
@@ -112,13 +117,13 @@ const loginUser = asyncHandler(async (req, res) => {
 // Logout Api (user)
 const logoutUser = asyncHandler(async (req, res) => {
     res.clearCookie("user_token")
-    res.json({ success: true, message: "User logged out successfully" })
+    return sendSuccess(res, { message: "User logged out successfully" })
 })
 
 // Logout Api (admin)
 const logoutAdmin = asyncHandler(async (req, res) => {
     res.clearCookie("admin_token")
-    res.json({ success: true, message: "Admin logged out successfully" })
+    return sendSuccess(res, { message: "Admin logged out successfully" })
 })
 
 module.exports = { registerUser, loginUser, logoutUser, logoutAdmin }

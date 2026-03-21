@@ -3,6 +3,8 @@ import Procedure from '../components/Procedure'
 import HeroBackground from '../components/HeroBackground'
 
 const Home = () => {
+
+  //============================================================================================================================================================//
   return (
     <div>
       <HeroBackground />

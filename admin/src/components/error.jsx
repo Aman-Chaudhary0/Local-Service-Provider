@@ -15,7 +15,7 @@ const Error = () => {
         </p>
         <div className='mt-6'>
           <Link
-            to="/"
+            to="/admin/dashboard"
             className='inline-block bg-blue-700 text-white px-5 py-2 rounded-lg'
           >
             Go to home

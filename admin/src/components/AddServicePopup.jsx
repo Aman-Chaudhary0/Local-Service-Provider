@@ -1,6 +1,8 @@
 import React from 'react'
 import axios from 'axios'
 import { useState } from 'react'
+import { initialServiceFormData, validateServiceForm } from '../validators/serviceValidation'
+import { getApiErrorMessage } from '../utils/api'
 
 const AddServicePopup = ({ isServiceAdd, setIsServiceAdd }) => {
 
@@ -11,11 +13,7 @@ const AddServicePopup = ({ isServiceAdd, setIsServiceAdd }) => {
     const [isLoading, setIsLoading] = useState(false);
 
     // formData to get data from form
-    const [formData, setFormData] = useState({
-        serviceName: "",
-        experience: "",
-        charge: "",
-    })
+    const [formData, setFormData] = useState(initialServiceFormData)
 
     // handle changes when input values in form
     const handleChange = (e) => {
@@ -35,29 +33,29 @@ const AddServicePopup = ({ isServiceAdd, setIsServiceAdd }) => {
         setErrorMessage("");
         setSuccessMessage("");
         setEmptyMessage("");
+        const validationErrors = validateServiceForm(formData)
 
         // empty message for any input field is empty 
-        if (!formData.serviceName.trim() || !formData.experience.trim() || !formData.charge.trim()) {
-            setEmptyMessage("Please fill all required fields");
+        if (Object.values(validationErrors).some(Boolean)) {
+            setErrorMessage(Object.values(validationErrors).find(Boolean) || "Please enter valid service details");
             return;
         }
 
         // fetching Api
         try {
             setIsLoading(true);
-            const res = await axios.post("http://localhost:3000/api/add/service", formData, {
+            const res = await axios.post("http://localhost:3000/api/add/service", {
+                serviceName: formData.serviceName.trim(),
+                experience: formData.experience.trim(),
+                charge: formData.charge.trim(),
+            }, {
                 withCredentials: true
             });
 
             // sending success message and empty form after submittion
             if (res.data?.success) {
                 setSuccessMessage("Service added successfully.");
-                setFormData((prev) => ({
-                    ...prev,
-                    serviceName: "",
-                    experience: "",
-                    charge: "",
-                }));
+                setFormData(initialServiceFormData);
 
                 // reload page after submittion
                 setTimeout(() => {
@@ -69,14 +67,14 @@ const AddServicePopup = ({ isServiceAdd, setIsServiceAdd }) => {
 
             setErrorMessage(res.data?.message || "Failed to add service.");
         } catch (error) {
-            setErrorMessage(error.response?.data?.message || error.message || "Failed to add service.");
+            setErrorMessage(getApiErrorMessage(error, "Failed to add service."));
         } finally {
             setIsLoading(false);
         }
     }
 
 
-
+//============================================================================================================================================================//
     return (    // display none after form submition
         <div style={{
             display: isServiceAdd ? "none" : "block"
@@ -87,14 +85,14 @@ const AddServicePopup = ({ isServiceAdd, setIsServiceAdd }) => {
                 {errorMessage && <p className='text-red-600 text-center my-2'>{errorMessage}</p>}
                 {successMessage && <p className='text-green-700 text-center my-2'>{successMessage}</p>}
                 {isLoading && <p className='mx-2 mt-3 rounded bg-blue-100 px-3 py-2 text-sm text-blue-700'>Adding service...</p>}
-                
+
                 <h2 className='text-center text-2xl font-semibold'>Add New Service</h2>
 
-                <input required placeholder='Your Service' name='serviceName' value={formData.serviceName} className='w-auto my-2 py-1 rounded px-2 border border-gray-500 mx-2' onChange={handleChange} />
+                <input placeholder='Your Service' name='serviceName' value={formData.serviceName} className='w-auto my-2 py-1 rounded px-2 border border-gray-500 mx-2' onChange={handleChange} />
 
-                <input required placeholder='Experience' name='experience' value={formData.experience} className='w-auto my-2 py-1 rounded px-2 border border-gray-500 mx-2' onChange={handleChange} />
+                <input placeholder='Experience' name='experience' value={formData.experience} className='w-auto my-2 py-1 rounded px-2 border border-gray-500 mx-2' onChange={handleChange} />
 
-                <input required placeholder='Charges' name='charge' value={formData.charge} className='w-auto my-2 py-1 rounded px-2 border border-gray-500 mx-2' onChange={handleChange} />
+                <input placeholder='Charges' name='charge' value={formData.charge} className='w-auto my-2 py-1 rounded px-2 border border-gray-500 mx-2' onChange={handleChange} />
 
                 <button disabled={isLoading} type='submit' className='bg-blue-900 w-[60%] mx-auto py-2 rounded-lg text-white font-semibold my-3 cursor-pointer disabled:bg-blue-400'>
                     {isLoading ? "Adding..." : "Add"}

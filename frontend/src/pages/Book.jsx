@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import { validateBookingForm } from '../validators/bookingValidation'
+import { getApiErrorMessage } from '../utils/api'
 
 // user can book a service 
 const Book = () => {
@@ -47,19 +49,33 @@ const Book = () => {
     setErrorMessage("");
     setSuccessMessage("");
     setEmptyMessage("");
+    const validationErrors = validateBookingForm(formData)
 
     // if any input is empty show empty msg
     if (!formData.adminId || !formData.bookService || !formData.date || !formData.time || !formData.address.trim()) {
-      setEmptyMessage("Please fill all booking details");
+      setErrorMessage(Object.values(validationErrors).find(Boolean) || "Please fill all booking details");
+      return;
+    }
+
+
+    // display validation errors
+    if (Object.values(validationErrors).some(Boolean)) {
+      setErrorMessage(Object.values(validationErrors).find(Boolean) || "Please enter valid booking details")
       return;
     }
 
     try {
+
+      // fetchiing api
       setIsLoading(true);
-      await axios.post("http://localhost:3000/api/add/bookservice", formData, {
+      await axios.post("http://localhost:3000/api/add/bookservice", {
+        ...formData,
+        address: formData.address.trim(),
+      }, {
         withCredentials: true
       })
 
+      // set from data empty after form submition
       setFormData({
         adminId: adminId || fallbackAdminId || "",
         bookService: service || "",
@@ -68,13 +84,14 @@ const Book = () => {
         address: ""
       })
 
+      // move dashboard after form submition
       setSuccessMessage("Booking created successfully");
       setTimeout(() => {
         navigate("/dashboard");
       }, 800);
 
     } catch (error) {
-      setErrorMessage(error.response?.data?.message || "Unable to book service");
+      setErrorMessage(getApiErrorMessage(error, "Unable to book service"));
     } finally {
       setIsLoading(false);
     }
@@ -82,6 +99,8 @@ const Book = () => {
 
   }
 
+
+  //============================================================================================================================================================//
   return (
     <div>
 
@@ -97,13 +116,13 @@ const Book = () => {
         {isLoading && <p className='mx-7 mb-2 rounded bg-blue-100 px-4 py-3 text-blue-700'>Submitting booking...</p>}
 
         <label className='w-full mx-7 text-blue-950 font-semibold text-2xl mt-3' htmlFor="date" >Select Date</label>
-        <input required name='date' value={formData.date} onChange={handleChange} className='w-[90%] px-4 py-1 rounded mx-7 border outline-none border-gray-400 text-lg my-3' type="date" id='date' placeholder='Select Date' />
+        <input name='date' value={formData.date} onChange={handleChange} className='w-[90%] px-4 py-1 rounded mx-7 border outline-none border-gray-400 text-lg my-3' type="date" id='date' placeholder='Select Date' />
 
         <label className='w-full mx-7 text-blue-950 font-semibold text-2xl mt-3' htmlFor="time" >Select Time</label>
-        <input required name='time' value={formData.time} onChange={handleChange} className='w-[90%] px-4 py-1 rounded mx-7 border outline-none border-gray-400 text-lg my-3' type="time" id='time' placeholder='Select Time' />
+        <input name='time' value={formData.time} onChange={handleChange} className='w-[90%] px-4 py-1 rounded mx-7 border outline-none border-gray-400 text-lg my-3' type="time" id='time' placeholder='Select Time' />
 
         <label className='w-full mx-7 text-blue-950 font-semibold text-2xl mt-3' htmlFor="address">Enter Address</label>
-        <textarea required name='address' value={formData.address} onChange={handleChange} className='w-[90%] px-4 py-1 rounded mx-7 border outline-none border-gray-400 text-lg my-3' id="address"></textarea>
+        <textarea name='address' value={formData.address} onChange={handleChange} className='w-[90%] px-4 py-1 rounded mx-7 border outline-none border-gray-400 text-lg my-3' id="address"></textarea>
 
         <button disabled={isLoading} type='submit' className='bg-blue-500 w-[50%] m-auto py-2 rounded-2xl text-white font-semibold cursor-pointer my-4 disabled:bg-blue-300'>
           {isLoading ? "Booking..." : "Confirm Booking"}

@@ -48,7 +48,7 @@ const Navbar = () => {
 
 
 
-
+//============================================================================================================================================================//
     return (
         <div className='flex justify-between bg-blue-100 h-15 items-center px-4'>
             {logoutError && <p className='absolute left-1/2 top-16 z-10 -translate-x-1/2 rounded bg-red-100 px-4 py-2 text-sm text-red-700'>{logoutError}</p>}

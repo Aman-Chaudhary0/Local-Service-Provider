@@ -1,9 +1,12 @@
 import React from 'react'
 import { assets } from '../assets/assets'
 
-const Search = ({ value, onChange, onSubmit }) => {
+const Search = ({ value, onChange }) => {
+
+
+  //============================================================================================================================================================//
   return (
-    <form onSubmit={onSubmit} className='bg-slate-300 h-40 relative pl-3 border-b-2 border-gray-400'>
+    <div className='bg-slate-300 h-40 relative pl-3 border-b-2 border-gray-400'>
         <h2 className='py-5 font-bold text-4xl text-gray-800 max-md:text-3xl'>Find Local Service Providers Your Area</h2>
 
         <div className='bg-white flex absolute bottom-1 rounded-t w-[80%] h-13 items-center '> 
@@ -16,10 +19,8 @@ const Search = ({ value, onChange, onSubmit }) => {
               value={value}
               onChange={onChange}
             />
-            <button type="submit" className='text-white bg-blue-500 rounded px-2 py-1 mx-2 cursor-pointer outline-none border border-gray-400'>Search</button>
-            
         </div>
-    </form>
+    </div>
   )
 }
 

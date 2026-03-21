@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import AdminBooking from './AdminBooking'
 import axios from 'axios'
+import { getApiData, getApiErrorMessage } from '../utils/api'
 
 // bookings list of an admin
 const AdminBookingsList = () => {
@@ -20,7 +21,7 @@ const AdminBookingsList = () => {
         })
 
         // get boking information from server
-        const bookingsList = res.data.data.map((service) => ({
+        const bookingsList = (getApiData(res) || []).map((service) => ({
           bookingId: service._id,
           userName: service.userId?.username || "Unknown",
           time: service.time,
@@ -32,7 +33,7 @@ const AdminBookingsList = () => {
         setBookings(bookingsList);
         setError("");
       } catch (err) {
-        setError(err.response?.data?.message || "Failed to load bookings");
+        setError(getApiErrorMessage(err, "Failed to load bookings"));
         setBookings([]);
 
       } finally {
@@ -43,6 +44,8 @@ const AdminBookingsList = () => {
     fetchBookings();
   }, [])
 
+
+  //============================================================================================================================================================//
 
   return (
     <div>

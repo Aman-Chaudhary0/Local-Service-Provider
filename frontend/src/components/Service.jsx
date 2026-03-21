@@ -11,6 +11,8 @@ const Service = ({ adminId, name, service, rate, experience }) => {
     // move to book page onClick book now
     const navigate = useNavigate()
 
+
+    //============================================================================================================================================================//
     return (
         <div className='bg-white flex w-[80%] max-md:w-[90%] mx-auto my-2.5 justify-between items-center rounded max-md:flex-col py-6'>
             <img className='w-30 h-30 p-2' src={assets.profileLogo} alt="" />

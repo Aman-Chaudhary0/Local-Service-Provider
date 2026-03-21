@@ -24,7 +24,13 @@ app.use(cors({
 const limiter = rateLimit({
     max: 100,
     windowMs: 60 * 10 * 1000,
-    message: "You send multiple request please try after sometime"
+    message: {
+        success: false,
+        message: "You send multiple request please try after sometime",
+        data: null,
+        errors: [],
+        meta: null,
+    }
 })
 
 app.use('/api/auth', limiter)

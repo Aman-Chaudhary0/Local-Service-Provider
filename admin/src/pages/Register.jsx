@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 import { useNavigate } from "react-router-dom";
+import { initialAdminAuthFormData, validateAdminAuthForm } from '../validators/authValidation'
+import { getApiData, getApiErrorMessage } from '../utils/api'
 
 const Register = () => {
 
@@ -15,12 +17,7 @@ const Register = () => {
     const [isLoading, setIsLoading] = useState(false);
 
     // set inputs in form
-    const [formData, setFormData] = useState({
-        username: "",
-        email: "",
-        password: "",
-        role: "admin"
-    });
+    const [formData, setFormData] = useState(initialAdminAuthFormData);
 
     // error message state
     const [errorMessage, setErrorMessage] = useState("");
@@ -42,17 +39,9 @@ const Register = () => {
         setErrorMessage("");
         setSuccessMessage("");
         setEmptyMessage("");
-
-        const isSignUp = currState === "Sign Up";
-
-        // empty message when any input is empty
-        const hasEmptyFields = isSignUp
-            ? !formData.username.trim() || !formData.email.trim() || !formData.password.trim()
-            : !formData.email.trim() || !formData.password.trim();
-
-
-        if (hasEmptyFields) {
-            setEmptyMessage("Please fill all required fields");
+        const validationErrors = validateAdminAuthForm({ formData, currState })
+        if (Object.keys(validationErrors).length > 0) {
+            setErrorMessage(Object.values(validationErrors).find(Boolean) || "Please enter valid details");
             return;
         }
 
@@ -65,20 +54,26 @@ const Register = () => {
                 ? "http://localhost:3000/api/auth/login"
                 : "http://localhost:3000/api/auth/register";
 
-            // use payload only when user want to login
+            // use payload only when user want to login and trim data before submition
             const payload = isLogin
                 ? {
-                    email: formData.email,
-                    password: formData.password,
+                    email: formData.email.trim(),
+                    password: formData.password.trim(),
                 }
-                : formData;
+                : {
+                    username: formData.username.trim(),
+                    email: formData.email.trim(),
+                    password: formData.password.trim(),
+                    role: "admin"
+                };
 
             const res = await axios.post(endpoint, payload, {
                 withCredentials: true   // for cookies
             })
+            const responseData = getApiData(res)
 
             // login not allowed when user is normal user
-            if (res.data.user.role === "user" && endpoint === "http://localhost:3000/api/auth/login") {
+            if (responseData?.user?.role === "user" && endpoint === "http://localhost:3000/api/auth/login") {
                 setErrorMessage("User login is not allowed here");
                 return
             }
@@ -89,9 +84,9 @@ const Register = () => {
                 setSuccessMessage(res.data.message || "Success");
 
                 // Set token in local storage on successful login/registration
-                if (res.data.user && res.data.user.id) {
-                    localStorage.setItem("admin_token", res.data.token);
-                    localStorage.setItem("_id",res.data.user.id);
+                if (responseData?.user?.id) {
+                    localStorage.setItem("admin_token", responseData.token);
+                    localStorage.setItem("_id", responseData.user.id);
 
                     setTimeout(() => {
                         navigate("/admin/dashboard");
@@ -99,7 +94,7 @@ const Register = () => {
                     }, 700);
                 }
                 setCurrState("Login");
-                setFormData({ username: "", email: "", password: "", role: "admin" })
+                setFormData(initialAdminAuthFormData)
             } else {
                 // Show error message from server
                 setErrorMessage(res.data.message || "An error occurred");
@@ -107,19 +102,23 @@ const Register = () => {
 
         } catch (error) {
             console.log(error);
-            setErrorMessage(error.response?.data?.message || error.message || "Registration failed. Please try again.");
+            setErrorMessage(getApiErrorMessage(error, "Registration failed. Please try again."));
         } finally {
             setIsLoading(false);
         }
     }
 
 
+    //============================================================================================================================================================//
     return (
         <div className='z-1 absolute bg-blue-50 border-2 border-gray-500 rounded p-4 h-120 w-100 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'>
 
 
             {/* Registration or login form  */}
             <form onSubmit={handleSubmit}>
+
+
+                {/* Error messages */}
                 {emptyMessage && <p className='mx-2 mt-3 rounded bg-yellow-100 px-3 py-2 text-sm text-yellow-800'>{emptyMessage}</p>}
                 {errorMessage && <p className='text-red-600 text-center my-2'>{errorMessage}</p>}
                 {successMessage && <p className='mx-2 mt-3 rounded bg-green-100 px-3 py-2 text-sm text-green-700'>{successMessage}</p>}
@@ -130,15 +129,15 @@ const Register = () => {
                 <div className='flex flex-col'>
 
                     {/* show username field only for registration */}
-                    {currState === "Login" ? <></> : <input required value={formData.username} className='w-auto my-2 py-1 rounded px-2 border border-gray-500 mx-2' type="text" placeholder='Your Name' onChange={handleChange} name='username' />}
+                    {currState === "Login" ? <></> : <input value={formData.username} className='w-auto my-2 py-1 rounded px-2 border border-gray-500 mx-2' type="text" placeholder='Your Name' onChange={handleChange} name='username' />}
 
-                    <input required value={formData.email} className='w-auto my-2 py-1 rounded px-2 border border-gray-500 mx-2' type="email" placeholder='Your Email' onChange={handleChange} name='email' />
+                    <input value={formData.email} className='w-auto my-2 py-1 rounded px-2 border border-gray-500 mx-2' type="email" placeholder='Your Email' onChange={handleChange} name='email' />
 
-                    <input required value={formData.password} className='w-auto my-2 py-1 rounded px-2 border border-gray-500 mx-2' type="password" placeholder='Your Password' name='password' onChange={handleChange} />
+                    <input value={formData.password} className='w-auto my-2 py-1 rounded px-2 border border-gray-500 mx-2' type="password" placeholder='Your Password' name='password' onChange={handleChange} />
 
                     <div className='flex items-start'>
 
-                        <input required type="checkbox" className='m-4 ' />
+                        <input type="checkbox" className='m-4 ' required />
                         <p> By Continuing, i agree to the terms of use and privicy policy</p>
 
                     </div>
@@ -153,8 +152,8 @@ const Register = () => {
 
             {/* move to sign up from login and login from sign up */}
             {currState === "Login" ?
-                <p className='mx-4'>Create a new account? <span className='text-blue-800 cursor-pointer' onClick={() => { setCurrState("Sign Up"); setFormData({ username: "", email: "", password: "", role: "admin" }); setErrorMessage(""); setSuccessMessage(""); setEmptyMessage(""); }}>Click here</span></p> :
-                <p className='mx-4'>Already have an account?  <span className='text-blue-800 cursor-pointer' onClick={() => { setCurrState("Login"); setFormData({ username: "", email: "", password: "", role: "admin" }); setErrorMessage(""); setSuccessMessage(""); setEmptyMessage(""); }}> Login here</span></p>
+                <p className='mx-4'>Create a new account? <span className='text-blue-800 cursor-pointer' onClick={() => { setCurrState("Sign Up"); setFormData(initialAdminAuthFormData); setErrorMessage(""); setSuccessMessage(""); setEmptyMessage(""); }}>Click here</span></p> :
+                <p className='mx-4'>Already have an account?  <span className='text-blue-800 cursor-pointer' onClick={() => { setCurrState("Login"); setFormData(initialAdminAuthFormData); setErrorMessage(""); setSuccessMessage(""); setEmptyMessage(""); }}> Login here</span></p>
             }
 
         </div>
