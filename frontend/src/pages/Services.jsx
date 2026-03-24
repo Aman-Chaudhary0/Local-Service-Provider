@@ -2,17 +2,19 @@ import React, { useEffect, useRef, useState } from 'react'
 import Service from '../components/Service'
 import axios from 'axios'
 import Search from '../components/Search'
-import { getApiData, getApiErrorMessage } from '../utils/api'
+import { getApiErrorMessage, normalizeApiResponse } from '../utils/api'
 
 // debounce time
 const SEARCH_DEBOUNCE_MS = 400
 
 const Services = () => {
+  const DEFAULT_LIMIT = 10
 
   // store services
   const [services, setServices] = useState([])
   const [search, setSearch] = useState("")
   const [page, setPage] = useState(1)
+  const [sort, setSort] = useState("newest")
   const [isLoading, setIsLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState("")
 
@@ -24,12 +26,12 @@ const Services = () => {
   const [pagination, setPagination] = useState({
     total: 0,
     page: 1,
-    limit: 10,
+    limit: DEFAULT_LIMIT,
     totalPages: 1,
   })
 
   // fetch api
-  const fetchServices = async (searchTerm = "", pageNumber = 1) => {
+  const fetchServices = async (searchTerm = "", pageNumber = 1, sortBy = "newest") => {
 
     // remove current store value , intialise abortcontroller 
     abortControllerRef.current?.abort()
@@ -44,7 +46,12 @@ const Services = () => {
 
         // connect fetch with controller
         signal: controller.signal,
-        params: { search: searchTerm, page: pageNumber, limit: 10 },
+        params: {
+          search: searchTerm,
+          page: pageNumber,
+          limit: DEFAULT_LIMIT,
+          sort: sortBy,
+        },
       })
 
       // only display UI of current active request
@@ -52,11 +59,26 @@ const Services = () => {
         return
       }
 
-      setServices(getApiData(res) || [])
-      setPagination(res.data.meta || {
+      const apiResponse = normalizeApiResponse(res, "Services loaded successfully")
+
+       // if api fetch unsuccessfull
+      if (!apiResponse.ok) {
+        setErrorMessage(apiResponse.message || "Unable to load services")
+        setServices([])
+        setPagination({
+          total: 0,
+          page: pageNumber,
+          limit: DEFAULT_LIMIT,
+          totalPages: 1,
+        })
+        return
+      }
+
+      setServices(Array.isArray(apiResponse.data) ? apiResponse.data : [])
+      setPagination(apiResponse.meta || {
         total: 0,
         page: pageNumber,
-        limit: 10,
+        limit: DEFAULT_LIMIT,
         totalPages: 1,
       })
     } catch (error) {
@@ -78,15 +100,15 @@ const Services = () => {
     // if page not load once data fetch immediately
     if (!hasLoadedOnceRef.current) {
       hasLoadedOnceRef.current = true
-      fetchServices(search, page)
+      fetchServices(search, page, sort)
       return () => {
         abortControllerRef.current?.abort()
       }
     }
 
-    // calling function when change in search or page
+    // calling function when change in search, sort or page
     const timeoutId = setTimeout(() => {
-      fetchServices(search, page)
+      fetchServices(search, page, sort)
     }, SEARCH_DEBOUNCE_MS)
 
     // clear debounce time and cancel curr req
@@ -94,7 +116,7 @@ const Services = () => {
       clearTimeout(timeoutId)
       abortControllerRef.current?.abort()
     }
-  }, [search, page])
+  }, [search, page, sort])
 
 
 
@@ -106,19 +128,39 @@ const Services = () => {
         value={search}
         onChange={(e) => {
           setSearch(e.target.value)
+          setPage(1)
+          setErrorMessage("")
+        }}
+
+        // sort providers
+        sort={sort}
+        onSortChange={(e) => {
+          setSort(e.target.value)
+          setPage(1)
           setErrorMessage("")
         }}
       />
-      <div className='bg-neutral-200 py-4 h-auto '>
-        {isLoading && <p className='mx-auto mb-4 w-[80%] rounded bg-blue-100 px-4 py-3 text-blue-700'>Loading services...</p>}
-        {!isLoading && errorMessage && <p className='mx-auto mb-4 w-[80%] rounded bg-red-100 px-4 py-3 text-red-700'>{errorMessage}</p>}
-        {!isLoading && !errorMessage && services.length === 0 && <p className='mx-auto mb-4 w-[80%] rounded bg-yellow-100 px-4 py-3 text-yellow-800'>No services found.</p>}
+      <div className='bg-slate-50 py-8'>
+        <div className='section-shell space-y-6'>
+          <div className='flex flex-col gap-2 md:flex-row md:items-end md:justify-between'>
+            <div>
+              <p className='text-sm font-semibold uppercase tracking-[0.2em] text-slate-500'>Results</p>
+              <h3 className='text-3xl font-semibold tracking-tight text-slate-900'>Available providers</h3>
+            </div>
+            <p className='text-sm text-slate-500'>Showing page {pagination.page} of {pagination.totalPages}</p>
+          </div>
 
-        {services.map((item, index) => (
-          <Service key={index} adminId={item.id} name={item.name} service={item.service} rate={item.rate} experience={item.experience} />
-        ))}
+        {isLoading && <p className='feedback-banner feedback-info'>Loading services...</p>}
+        {!isLoading && errorMessage && <p className='feedback-banner feedback-error'>{errorMessage}</p>}
+        {!isLoading && !errorMessage && services.length === 0 && <p className='feedback-banner feedback-warning'>No services found.</p>}
 
-        <div className='flex justify-center items-center gap-4 py-6'>
+        <div className='space-y-4'>
+          {services.map((item, index) => (
+            <Service key={index} adminId={item.id} name={item.name} service={item.service} rate={item.rate} experience={item.experience} />
+          ))}
+        </div>
+
+        <div className='flex flex-col items-center justify-center gap-4 pt-2 md:flex-row'>
 
           {/* btn for previos page */}
           <button
@@ -128,12 +170,12 @@ const Services = () => {
               setPage(prevPage)
             }}
             disabled={page === 1 || isLoading}
-            className='px-4 py-2 bg-blue-900 text-white rounded disabled:bg-gray-400'
+            className='primary-button px-4 py-2'
           >
             Previous
           </button>
 
-          <p>Page {pagination.page} of {pagination.totalPages}</p>
+          <p className='text-sm font-medium text-slate-600'>Page {pagination.page} of {pagination.totalPages}</p>
 
           {/* btn for next page */}
           <button
@@ -143,10 +185,11 @@ const Services = () => {
               setPage(nextPage)
             }}
             disabled={page === pagination.totalPages || isLoading}
-            className='px-4 py-2 bg-blue-900 text-white rounded disabled:bg-gray-400'
+            className='primary-button px-4 py-2'
           >
             Next
           </button>
+        </div>
         </div>
       </div>
     </>

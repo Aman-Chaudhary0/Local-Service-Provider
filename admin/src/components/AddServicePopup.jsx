@@ -2,7 +2,7 @@ import React from 'react'
 import axios from 'axios'
 import { useState } from 'react'
 import { initialServiceFormData, validateServiceForm } from '../validators/serviceValidation'
-import { getApiErrorMessage } from '../utils/api'
+import { getApiErrorMessage, normalizeApiResponse } from '../utils/api'
 
 const AddServicePopup = ({ isServiceAdd, setIsServiceAdd }) => {
 
@@ -51,10 +51,11 @@ const AddServicePopup = ({ isServiceAdd, setIsServiceAdd }) => {
             }, {
                 withCredentials: true
             });
+            const apiResponse = normalizeApiResponse(res, "Service added successfully.");
 
             // sending success message and empty form after submittion
-            if (res.data?.success) {
-                setSuccessMessage("Service added successfully.");
+            if (apiResponse.ok) {
+                setSuccessMessage(apiResponse.message);
                 setFormData(initialServiceFormData);
 
                 // reload page after submittion
@@ -65,7 +66,7 @@ const AddServicePopup = ({ isServiceAdd, setIsServiceAdd }) => {
                 return;
             }
 
-            setErrorMessage(res.data?.message || "Failed to add service.");
+            setErrorMessage(apiResponse.message || "Failed to add service.");
         } catch (error) {
             setErrorMessage(getApiErrorMessage(error, "Failed to add service."));
         } finally {
@@ -78,23 +79,26 @@ const AddServicePopup = ({ isServiceAdd, setIsServiceAdd }) => {
     return (    // display none after form submition
         <div style={{
             display: isServiceAdd ? "none" : "block"
-        }} className='z-1 absolute bg-blue-50 border-2 border-gray-500 rounded p-4 h-90 w-80 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'>
+        }} className='absolute left-1/2 top-1/2 z-10 w-[min(420px,calc(100%-24px))] -translate-x-1/2 -translate-y-1/2'>
 
-            <form onSubmit={handleSubmit}  >
-                {emptyMessage && <p className='mx-2 mt-3 rounded bg-yellow-100 px-3 py-2 text-sm text-yellow-800'>{emptyMessage}</p>}
-                {errorMessage && <p className='text-red-600 text-center my-2'>{errorMessage}</p>}
-                {successMessage && <p className='text-green-700 text-center my-2'>{successMessage}</p>}
-                {isLoading && <p className='mx-2 mt-3 rounded bg-blue-100 px-3 py-2 text-sm text-blue-700'>Adding service...</p>}
+            <form onSubmit={handleSubmit} className='surface-card flex flex-col gap-4 bg-slate-50 p-6'>
+                {emptyMessage && <p className='feedback-banner feedback-warning'>{emptyMessage}</p>}
+                {errorMessage && <p className='feedback-banner feedback-error'>{errorMessage}</p>}
+                {successMessage && <p className='feedback-banner feedback-success'>{successMessage}</p>}
+                {isLoading && <p className='feedback-banner feedback-info'>Adding service...</p>}
 
-                <h2 className='text-center text-2xl font-semibold'>Add New Service</h2>
+                <div className='space-y-1 text-center'>
+                  <p className='text-sm font-semibold uppercase tracking-[0.2em] text-blue-700'>Admin Service</p>
+                  <h2 className='text-3xl font-semibold tracking-tight text-slate-900'>Add new service</h2>
+                </div>
 
-                <input placeholder='Your Service' name='serviceName' value={formData.serviceName} className='w-auto my-2 py-1 rounded px-2 border border-gray-500 mx-2' onChange={handleChange} />
+                <input placeholder='Your Service' name='serviceName' value={formData.serviceName} className='field-input' onChange={handleChange} />
 
-                <input placeholder='Experience' name='experience' value={formData.experience} className='w-auto my-2 py-1 rounded px-2 border border-gray-500 mx-2' onChange={handleChange} />
+                <input placeholder='Experience' name='experience' value={formData.experience} className='field-input' onChange={handleChange} />
 
-                <input placeholder='Charges' name='charge' value={formData.charge} className='w-auto my-2 py-1 rounded px-2 border border-gray-500 mx-2' onChange={handleChange} />
+                <input placeholder='Charges' name='charge' value={formData.charge} className='field-input' onChange={handleChange} />
 
-                <button disabled={isLoading} type='submit' className='bg-blue-900 w-[60%] mx-auto py-2 rounded-lg text-white font-semibold my-3 cursor-pointer disabled:bg-blue-400'>
+                <button disabled={isLoading} type='submit' className='primary-button mt-2 py-3'>
                     {isLoading ? "Adding..." : "Add"}
                 </button>
 

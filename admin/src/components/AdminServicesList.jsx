@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import AdminService from './AdminService'
 import axios from 'axios'
-import { getApiData, getApiErrorMessage } from '../utils/api'
+import { getApiErrorMessage, normalizeApiResponse } from '../utils/api'
 
 
 // services offered by provider
@@ -19,7 +19,16 @@ const AdminServices = ({ setIsServiceAdd }) => {
 
       try {
         const res = await axios.get("http://localhost:3000/api/get/adminservices", { withCredentials: true })
-        setServiceList(getApiData(res) || [])
+        const apiResponse = normalizeApiResponse(res, "Services loaded successfully")
+
+        // if fetching api get unsuccessful
+        if (!apiResponse.ok) {
+          setErrorMessage(apiResponse.message || "Unable to load services")
+          setServiceList([])
+          return
+        }
+
+        setServiceList(Array.isArray(apiResponse.data) ? apiResponse.data : [])
 
       } catch (error) {
         setErrorMessage(getApiErrorMessage(error, "Unable to load services"))
@@ -50,7 +59,7 @@ const AdminServices = ({ setIsServiceAdd }) => {
           ))}
         </div>
 
-        <button onClick={() => setIsServiceAdd(false)} className='bg-blue-600 text-white mx-8 my-4 w-1/4 py-3.5 rounded text-xl'>Add New Service</button>
+        <button onClick={() => setIsServiceAdd(false)} className='bg-blue-600 text-white mx-8 my-4 w-[calc(100%-4rem)] py-3.5 rounded text-lg sm:w-auto sm:min-w-52 sm:text-xl'>Add New Service</button>
 
       
     </div>

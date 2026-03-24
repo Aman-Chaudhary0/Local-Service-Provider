@@ -14,9 +14,9 @@ const AdminDashboard = () => {
   //============================================================================================================================================================//
   return (
     <div className='bg-blue-50'>
-        <div className='bg-cyan-50 flex justify-between'>
-            <h2 className=' font-bold text-4xl m-5 max-sm:text-3xl'>Welcome, John!</h2>
-            <img src={assets.profileLogo} className=' h-30 w-30 rounded-full m-4 max-sm:h-25 max-sm:w-25 ' />
+        <div className='flex flex-col gap-4 bg-cyan-50 px-5 py-5 sm:flex-row sm:items-center sm:justify-between'>
+            <h2 className='text-3xl font-bold text-slate-900 sm:text-4xl'>Welcome, John!</h2>
+            <img src={assets.profileLogo} className='h-24 w-24 rounded-full sm:h-28 sm:w-28' />
         </div>
         
         <AddServicePopup isServiceAdd={isServiceAdd} setIsServiceAdd={setIsServiceAdd} />

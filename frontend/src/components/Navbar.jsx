@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { assets } from '../assets/assets'
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom'
+import { getApiErrorMessage, normalizeApiResponse } from '../utils/api'
 
 
 
@@ -28,9 +29,15 @@ const Navbar = ({ setShowLogin }) => {
         try {
             setIsLoggingOut(true);
             setLogoutError("");
-            await axios.post("http://localhost:3000/api/auth/logout", {}, {
+            const res = await axios.post("http://localhost:3000/api/auth/logout", {}, {
                 withCredentials: true
             });
+            const apiResponse = normalizeApiResponse(res, "Logged out successfully")
+
+             // if api fetch unsuccessfull
+            if (!apiResponse.ok) {
+                setLogoutError(apiResponse.message || "Logout failed")
+            }
 
             navigate("/");
             // Remove token from localStorage
@@ -42,7 +49,7 @@ const Navbar = ({ setShowLogin }) => {
 
         } catch (error) {
             console.error("Logout error:", error);
-            setLogoutError(error.response?.data?.message || "Logout failed");
+            setLogoutError(getApiErrorMessage(error, "Logout failed"));
             // Even if logout fails, remove token from localStorage
             localStorage.removeItem("user_token");
             window.location.reload();
@@ -58,7 +65,7 @@ const Navbar = ({ setShowLogin }) => {
     //============================================================================================================================================================//
     return (
         <div className='flex justify-between bg-blue-100 h-15 items-center px-4'>
-            {logoutError && <p className='absolute left-1/2 top-16 z-10 -translate-x-1/2 rounded bg-red-100 px-4 py-2 text-sm text-red-700'>{logoutError}</p>}
+            {logoutError && <p className='absolute left-1/2 top-16 z-10 w-[calc(100%-2rem)] max-w-md -translate-x-1/2 rounded bg-red-100 px-4 py-2 text-sm text-red-700'>{logoutError}</p>}
 
             <div className='flex items-center'>
                 <img onClick={() => navigate("/")} className='w-10 h-10 rounded-full' src={assets.logo} alt="" />
@@ -85,7 +92,7 @@ const Navbar = ({ setShowLogin }) => {
                 {!token && <button onClick={() => setShowLogin(true)} className='font-semibold bg-blue-700 text-white px-4 py-1.5 mx-3 rounded-xl cursor-pointer w-30'>Sign In</button>
                 }
 
-                {token && <button disabled={isLoggingOut} onClick={logout} className='max-md: font-semibold bg-blue-700 text-white px-4 py-1.5 rounded-xl cursor-pointer w-30 disabled:bg-blue-400'>{isLoggingOut ? "Logging out..." : "Logout"}</button>
+                {token && <button disabled={isLoggingOut} onClick={logout} className='font-semibold bg-blue-700 text-white px-4 py-1.5 rounded-xl cursor-pointer w-30 disabled:bg-blue-400'>{isLoggingOut ? "Logging out..." : "Logout"}</button>
                 }
 
                 {/* user profile logo */}

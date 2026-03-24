@@ -11,8 +11,11 @@ const listQueryFields = {
     .trim()
     .max(100, "Search must not exceed 100 characters")
     .optional(),
+  sort: z
+    .enum(["newest", "oldest", "service_asc", "service_desc"])
+    .optional(),
 
-    // coerse to convert string to number
+  // coerse to convert string to number
   page: z.coerce
     .number()
     .int()
@@ -59,7 +62,7 @@ const providersQuerySchema = z.object({
 const requestStatusSchema = z.object({
   body: z.object({
     _id: objectId,
-    status: z.enum(["Pending", "Accepted", "Rejected"]),
+    status: z.enum(["Accepted", "Rejected"]),
   }).strict(),
 });
 

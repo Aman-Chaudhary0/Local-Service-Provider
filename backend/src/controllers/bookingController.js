@@ -36,6 +36,7 @@ const bookingService = asyncHandler(async (req, res) => {
     await user.save();
 
     return sendSuccess(res, {
+        statusCode: 201,
         message: "Service added successfully",
         data: service,
     });
@@ -94,19 +95,22 @@ const requestStatus = asyncHandler(async (req, res) => {
         throw new AppError("Unauthorized", 401);
     }
 
-    const update = await bookedServiceModel.findOneAndUpdate(
-        { _id, adminId },
-        { status },
-        { new: true }
-    );
+    const booking = await bookedServiceModel.findOne({ _id, adminId });
 
-    if (!update) {
+    if (!booking) {
         throw new AppError("Forbidden", 403);
     }
 
+    if (booking.status !== "Pending") {
+        throw new AppError("Booking status can only change from Pending to Accepted or Rejected", 409);
+    }
+
+    booking.status = status;
+    await booking.save();
+
     return sendSuccess(res, {
-        message: "Request status updated successfully",
-        data: update,
+        message: `Request ${status.toLowerCase()} successfully`,
+        data: booking,
     });
 });
 

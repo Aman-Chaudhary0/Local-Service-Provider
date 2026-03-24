@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import axios from 'axios'
 import { useNavigate } from "react-router-dom";
 import { initialAdminAuthFormData, validateAdminAuthForm } from '../validators/authValidation'
-import { getApiData, getApiErrorMessage } from '../utils/api'
+import { getApiErrorMessage, normalizeApiResponse } from '../utils/api'
 
 const Register = () => {
 
@@ -70,7 +70,8 @@ const Register = () => {
             const res = await axios.post(endpoint, payload, {
                 withCredentials: true   // for cookies
             })
-            const responseData = getApiData(res)
+            const apiResponse = normalizeApiResponse(res, isLogin ? "Login successful" : "Registration successful")
+            const responseData = apiResponse.data
 
             // login not allowed when user is normal user
             if (responseData?.user?.role === "user" && endpoint === "http://localhost:3000/api/auth/login") {
@@ -80,8 +81,8 @@ const Register = () => {
 
 
             // Check if response is successful
-            if (res.data.success) {
-                setSuccessMessage(res.data.message || "Success");
+            if (apiResponse.ok) {
+                setSuccessMessage(apiResponse.message || "Success");
 
                 // Set token in local storage on successful login/registration
                 if (responseData?.user?.id) {
@@ -97,7 +98,7 @@ const Register = () => {
                 setFormData(initialAdminAuthFormData)
             } else {
                 // Show error message from server
-                setErrorMessage(res.data.message || "An error occurred");
+                setErrorMessage(apiResponse.message || "An error occurred");
             }
 
         } catch (error) {
@@ -111,7 +112,8 @@ const Register = () => {
 
     //============================================================================================================================================================//
     return (
-        <div className='z-1 absolute bg-blue-50 border-2 border-gray-500 rounded p-4 h-120 w-100 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'>
+        <div className='flex min-h-[calc(100vh-60px)] items-center justify-center bg-slate-50 p-4'>
+        <div className='max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl border border-slate-200 bg-blue-50 p-4 shadow-xl'>
 
 
             {/* Registration or login form  */}
@@ -129,20 +131,20 @@ const Register = () => {
                 <div className='flex flex-col'>
 
                     {/* show username field only for registration */}
-                    {currState === "Login" ? <></> : <input value={formData.username} className='w-auto my-2 py-1 rounded px-2 border border-gray-500 mx-2' type="text" placeholder='Your Name' onChange={handleChange} name='username' />}
+                    {currState === "Login" ? <></> : <input value={formData.username} className='my-2 w-full rounded border border-gray-500 px-3 py-2' type="text" placeholder='Your Name' onChange={handleChange} name='username' />}
 
-                    <input value={formData.email} className='w-auto my-2 py-1 rounded px-2 border border-gray-500 mx-2' type="email" placeholder='Your Email' onChange={handleChange} name='email' />
+                    <input value={formData.email} className='my-2 w-full rounded border border-gray-500 px-3 py-2' type="email" placeholder='Your Email' onChange={handleChange} name='email' />
 
-                    <input value={formData.password} className='w-auto my-2 py-1 rounded px-2 border border-gray-500 mx-2' type="password" placeholder='Your Password' name='password' onChange={handleChange} />
+                    <input value={formData.password} className='my-2 w-full rounded border border-gray-500 px-3 py-2' type="password" placeholder='Your Password' name='password' onChange={handleChange} />
 
-                    <div className='flex items-start'>
+                    <div className='flex items-start gap-2'>
 
-                        <input type="checkbox" className='m-4 ' required />
-                        <p> By Continuing, i agree to the terms of use and privicy policy</p>
+                        <input type="checkbox" className='mt-1' required />
+                        <p className='text-sm text-slate-700'>By continuing, I agree to the terms of use and privacy policy.</p>
 
                     </div>
 
-                    <button disabled={isLoading} type='submit' className='bg-blue-900 w-[60%] mx-auto py-2 rounded-lg text-white font-semibold my-3 cursor-pointer disabled:bg-blue-400'>
+                    <button disabled={isLoading} type='submit' className='mx-auto my-3 w-full rounded-lg bg-blue-900 py-3 text-white font-semibold cursor-pointer disabled:bg-blue-400 sm:w-[60%]'>
                         {isLoading ? "Loading..." : currState}
                     </button>
 
@@ -156,6 +158,7 @@ const Register = () => {
                 <p className='mx-4'>Already have an account?  <span className='text-blue-800 cursor-pointer' onClick={() => { setCurrState("Login"); setFormData(initialAdminAuthFormData); setErrorMessage(""); setSuccessMessage(""); setEmptyMessage(""); }}> Login here</span></p>
             }
 
+        </div>
         </div>
     )
 }

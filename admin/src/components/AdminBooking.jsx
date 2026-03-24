@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import axios from 'axios'
 import { useState } from 'react'
+import { getApiErrorMessage, normalizeApiResponse } from '../utils/api'
 
 // admin bookings
 const AdminBooking = ({ bookingId, userName, time, date, address, status }) => {
@@ -15,26 +16,39 @@ const AdminBooking = ({ bookingId, userName, time, date, address, status }) => {
 
   // update status of booking request
   const updateStatus = async (nextStatus) => {
+    const previousStatus = requestStatus
+    const previousClick = click
+
     try {
       setIsLoading(true)
       setErrorMessage("")
       setSuccessMessage("")
 
       //api fetching
-      await axios.post("http://localhost:3000/api/get/requeststatus", {
+      const res = await axios.post("http://localhost:3000/api/get/requeststatus", {
         _id: bookingId,
         status: nextStatus,
       }, { withCredentials: true })
+      const apiResponse = normalizeApiResponse(res, `Request ${nextStatus.toLowerCase()} successfully`)
 
+      // if api get fail
+      if (!apiResponse.ok) {
+        setErrorMessage(apiResponse.message || "Failed to update status")
+        setRequestStatus(previousStatus)
+        setClick(previousClick)
+        return
+      }
 
-      setSuccessMessage(`Request ${nextStatus.toLowerCase()} successfully`)
+      // api get succcess
+      setSuccessMessage(apiResponse.message)
       setClick(true)
       setRequestStatus(nextStatus)
 
+      // catching error
     } catch (err) {
-      setErrorMessage(err.response?.data?.message || "Failed to update status")
-      setRequestStatus(status)
-      setClick(false)
+      setErrorMessage(getApiErrorMessage(err, "Failed to update status"))
+      setRequestStatus(previousStatus)
+      setClick(previousClick)
 
     } finally {
       setIsLoading(false)
@@ -63,18 +77,18 @@ const AdminBooking = ({ bookingId, userName, time, date, address, status }) => {
 
   //============================================================================================================================================================//
   return (
-    <div className='bg-white rounded-xl mx-8 my-3 px-6 py-2'>
+    <div className='bg-white rounded-xl mx-8 my-3 px-6 py-4'>
 
       {/* booking info */}
-      <div className='flex justify-between'>
+      <div className='flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between'>
         <div>
           <p className='my-2 text-xl font-semibold'>Booking from: {userName}</p>
           <p className='my-2 text-gray-700'>Date: {date} at {time}</p>
-          <p className='my-2 text-gray-700'>Address : {address}</p>
+          <p className='my-2 break- text-gray-700'>Address : {address}</p>
         </div>
 
         {/* current status */}
-        <p className={`${color} h-8 rounded px-4 text-white my-auto`}>{requestStatus}</p>
+        <p className={`${color} inline-flex h-8 w-fit items-center rounded px-4 text-white`}>{requestStatus}</p>
 
       </div>
 
@@ -86,9 +100,9 @@ const AdminBooking = ({ bookingId, userName, time, date, address, status }) => {
       {isLoading && <p className='my-2 rounded bg-blue-100 px-3 py-2 text-sm text-blue-700'>Updating request...</p>}
 
       {/* accept and reject btn  */}
-      <div style={{ display: click ? "none" : "flex" }} className='flex justify-around'>
-        <button disabled={isLoading} onClick={() => { setRequestStatus("Rejected"); updateStatus("Rejected"); }} className=' bg-red-500 text-white px-8 py-1.5 my-2.5 rounded-xl text-lg disabled:bg-red-300'>Reject</button>
-        <button disabled={isLoading} onClick={() => { setRequestStatus("Accepted"); updateStatus("Accepted"); }} className=' bg-green-800 text-white px-8 py-1.5 my-2.5 rounded-xl text-lg disabled:bg-green-300'>Accept</button>
+      <div style={{ display: click ? "none" : "flex" }} className='flex flex-col gap-3 sm:flex-row sm:justify-around'>
+        <button disabled={isLoading} onClick={() => { setRequestStatus("Rejected"); updateStatus("Rejected"); }} className='bg-red-500 text-white px-8 py-2 my-1 rounded-xl text-lg disabled:bg-red-300'>Reject</button>
+        <button disabled={isLoading} onClick={() => { setRequestStatus("Accepted"); updateStatus("Accepted"); }} className='bg-green-800 text-white px-8 py-2 my-1 rounded-xl text-lg disabled:bg-green-300'>Accept</button>
       </div>
     </div>
   )

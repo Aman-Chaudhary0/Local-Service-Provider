@@ -47,6 +47,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
     // message registered user successfully
     return sendSuccess(res, {
+        statusCode: 201,
         message: "User registered successfully",
         data: {
             token,

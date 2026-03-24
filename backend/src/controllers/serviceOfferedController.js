@@ -28,6 +28,7 @@ const addService = asyncHandler(async (req, res) => {
     await user.save();
 
     return sendSuccess(res, {
+        statusCode: 201,
         message: "Service added successfully",
         data: user
     });

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import UserBooking from './UserBooking'
 import axios from 'axios'
 import { assets } from '../assets/assets'
-import { getApiData, getApiErrorMessage } from '../utils/api'
+import { getApiErrorMessage, normalizeApiResponse } from '../utils/api'
 
 const UserBookingsList = () => {
 
@@ -21,7 +21,17 @@ const UserBookingsList = () => {
       const res = await axios.get("http://localhost:3000/api/get/mybookings", {
         withCredentials: true
       })
-      const responseData = getApiData(res)
+      const apiResponse = normalizeApiResponse(res, "Bookings loaded successfully")
+
+       // if api fetch unsuccessfull
+      if (!apiResponse.ok) {
+        setErrorMessage(apiResponse.message || "Unable to load bookings")
+        setBookings([])
+        setUserName("")
+        return
+      }
+
+      const responseData = apiResponse.data
 
       setUserName(responseData?.username || "");
 
@@ -56,9 +66,9 @@ const UserBookingsList = () => {
 //============================================================================================================================================================//
   return (
     <div>
-      <div className='bg-cyan-50 flex justify-between'>
-        <h2 className=' font-bold text-4xl m-5 max-sm:text-3xl'>Welcome Back, {userName}!</h2>
-        <img src={assets.profileLogo} className='  h-30 w-30 rounded-full m-4 max-sm:h-25 max-sm:w-25 ' />
+      <div className='flex flex-col gap-4 bg-cyan-50 px-5 py-5 sm:flex-row sm:items-center sm:justify-between'>
+        <h2 className='text-3xl font-bold break-words text-slate-900 sm:text-4xl'>Welcome Back, {userName}!</h2>
+        <img src={assets.profileLogo} className='h-24 w-24 rounded-full sm:h-28 sm:w-28' />
       </div>
 
       <h2 className='font-semibold text-3xl text-blue-950 mx-8 mb-3.5 mt-7'>My Bookings</h2>
