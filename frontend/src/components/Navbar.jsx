@@ -83,8 +83,6 @@ const Navbar = ({ setShowLogin }) => {
                 <ul className='flex font-medium items-center'>
                     <li onClick={() => (setMenu("home"), navigate("/"))} className={` ${menu === "home" ? "active" : ""} px-3 text-neutral-700 cursor-pointer`}>Home</li>
                     <li onClick={() => (setMenu("services"), navigate("/services"))} className={` ${menu === "services" ? "active" : ""} px-3 text-neutral-700 cursor-pointer`}>Services</li>
-                    <li onClick={() => setMenu("about")} className={` ${menu === "about" ? "active" : ""} px-3 text-neutral-700 cursor-pointer`}>About</li>
-                    <li onClick={() => setMenu("contact")} className={` ${menu === "contact" ? "active" : ""} px-3 text-neutral-700 cursor-pointer`}>Contact</li>
                 </ul>
 
 

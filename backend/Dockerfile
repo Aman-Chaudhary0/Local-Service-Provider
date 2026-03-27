@@ -1,0 +1,20 @@
+#  base image
+FROM node:20-bookworm
+
+# our working directory
+WORKDIR /app
+
+# copy package.json and package-lock.json
+COPY package*.json ./
+
+#clear past dependencies and install all new dependencies
+RUN npm ci
+
+# copy rest of our app into the container
+COPY . .
+
+# expose port that we are use in our PC
+EXPOSE 3000
+
+# Run the app
+CMD ["npm", "run", "dev"]
