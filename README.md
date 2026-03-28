@@ -7,7 +7,7 @@ This project is designed as a portfolio project that demonstrates full-stack app
 ## Preview
 
 ### Demo Video
-[Watch the full project walkthrough on Google Drive](https://drive.google.com/drive/folders/1nu1YP6xuS9PKMg0LxBwUmvrsTGCzoFFa?usp=drive_link)
+[Watch the full project walkthrough on Google Drive](https://drive.google.com/file/d/1zWfq60jXzBkxdBNLeP9fWsQaFr37nrMi/view?usp=drive_link)
 
 ### User App Screens
 ![User Homepage](gitAssets/user-homepage.png)
@@ -160,7 +160,7 @@ npm run dev
 ## Deployment
 
 ### Live Demo
-- Demo Assets Folder: https://drive.google.com/drive/folders/1nu1YP6xuS9PKMg0LxBwUmvrsTGCzoFFa?usp=drive_link
+- Demo Assets Folder: https://drive.google.com/file/d/1zWfq60jXzBkxdBNLeP9fWsQaFr37nrMi/view?usp=drive_link
 - Add your deployed user app link here
 - Add your deployed admin app link here if you publish it separately
 - Add your backend API link here if you deploy it separately
