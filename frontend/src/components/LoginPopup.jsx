@@ -146,7 +146,7 @@ const LoginPopup = ({ setShowLogin }) => {
 
                     <div className='flex items-start gap-2'>
 
-                        <input type="checkbox" className='mt-1' />
+                        <input type="checkbox" className='mt-1' required />
                         <p className='text-sm text-slate-700'>By continuing, I agree to the terms of use and privacy policy.</p>
 
                     </div>
